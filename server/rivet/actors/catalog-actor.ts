@@ -67,7 +67,7 @@ export const catalogActor = actor({
       } else {
         results = results.filter(p => p.status === 'active')
       }
-      if (filters?.category) {
+      if (filters?.category && filters.category !== 'all') {
         results = results.filter(p => p.category === filters.category)
       }
       if (filters?.featured) {
@@ -83,6 +83,19 @@ export const catalogActor = actor({
     getByCategory: (c, category: string) => c.state.byCategory[category] ?? [],
 
     getCategories: (c) => Object.keys(c.state.byCategory),
+
+    searchProducts: (c, query: string) => {
+      const q = query.toLowerCase().trim()
+      if (!q) return []
+      return c.state.products.filter(p => {
+        if (p.status !== 'active') return false
+        return (
+          p.name.toLowerCase().includes(q) ||
+          (p.description && p.description.toLowerCase().includes(q)) ||
+          p.category.toLowerCase().includes(q)
+        )
+      }).slice(0, 20)
+    },
 
     // ── WRITE actions (mutate state + persist to MongoDB) ─────────────────
     createProduct: async (c, data: CreateProductInput): Promise<ProductDoc> => {

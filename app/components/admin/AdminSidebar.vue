@@ -12,6 +12,7 @@ import {
 } from 'lucide-vue-next'
 
 const route = useRoute()
+const { logout } = useAuth()
 
 const navMain = [
   {
@@ -128,7 +129,7 @@ const isActive = (item: typeof navMain[0]) => {
           <p class="text-[10px] text-on-surface-variant font-label uppercase tracking-widest mt-0.5">CHIEF EDITOR</p>
         </div>
       </div>
-      <button class="mt-6 flex items-center gap-3 text-sm text-on-surface-variant hover:text-on-surface transition-colors font-body">
+      <button @click="logout" class="mt-6 flex items-center gap-3 text-sm text-on-surface-variant hover:text-on-surface transition-colors font-body">
         <span class="material-symbols-outlined text-lg">logout</span>
         Logout
       </button>

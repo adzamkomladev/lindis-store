@@ -1,12 +1,17 @@
 import { initiateOrderSchema } from '~~/schemas/order.schema'
 import { nanoid } from 'nanoid'
 import { useRivet } from '~/server/rivet/client'
+import { ObjectId } from 'mongodb'
 
 export default defineEventHandler(async (event) => {
   const body = await readValidatedBody(event, initiateOrderSchema.parse)
   const config = useRuntimeConfig()
   const { initializeTransaction } = usePaystack()
   const rivet = useRivet()
+
+  // Check if customer is logged in
+  const session = await getUserSession(event)
+  const userId = session.user?.role === 'customer' ? new ObjectId(session.user.id) : undefined
 
   // 1. Generate unique order number & Paystack reference
   const orderNumber = `ls-${nanoid(8).toLowerCase()}`
@@ -63,6 +68,7 @@ export default defineEventHandler(async (event) => {
   const orderActor = rivet.orderActor.getOrCreate([orderNumber])
   await orderActor.commands.push({
     type: 'initiate',
+    userId: userId?.toString(),
     guestEmail: body.email,
     items: body.items.map((item: any) => ({
       productId: item.id,

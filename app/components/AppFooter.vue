@@ -6,13 +6,13 @@ const footerSections = {
     { label: 'Shop All', to: '/products' },
     { label: 'New Arrivals', to: '/products?sort=newest' },
     { label: 'Best Sellers', to: '/products?sort=popular' },
-    { label: 'Sustainability', to: '#' },
+    { label: 'Search', to: '/search' },
   ],
   support: [
-    { label: 'Shipping & Returns', to: '#' },
-    { label: 'Warranty', to: '#' },
-    { label: 'Contact', to: '#' },
-    { label: 'FAQ', to: '#' },
+    { label: 'Shipping & Returns', to: '/shipping-returns' },
+    { label: 'Warranty', to: '/warranty' },
+    { label: 'Contact', to: '/contact' },
+    { label: 'FAQ', to: '/faq' },
   ],
 }
 </script>
@@ -77,16 +77,7 @@ const footerSections = {
         <p class="font-body text-sm text-slate-500 leading-relaxed">
           Join our bulletin for exclusive collection drops and technical insights.
         </p>
-        <div class="relative">
-          <input
-            type="email"
-            placeholder="Email Address"
-            class="w-full bg-transparent border-0 border-b border-outline-variant py-2 pr-10 focus:outline-none focus:border-[#000622] transition-colors text-sm font-label placeholder:text-outline"
-          />
-          <button class="absolute right-0 top-1/2 -translate-y-1/2 text-[#000622] hover:opacity-70 transition-opacity" aria-label="Subscribe">
-            <span class="material-symbols-outlined text-lg">north_east</span>
-          </button>
-        </div>
+        <FooterNewsletter />
       </div>
     </div>
 
@@ -96,8 +87,8 @@ const footerSections = {
         © {{ currentYear }} Lindi's Store. Engineered for Life.
       </p>
       <div class="flex items-center gap-6">
-        <NuxtLink to="#" class="font-body text-sm text-slate-500 hover:text-[#000622] transition-colors">Privacy Policy</NuxtLink>
-        <NuxtLink to="#" class="font-body text-sm text-slate-500 hover:text-[#000622] transition-colors">Terms of Service</NuxtLink>
+        <NuxtLink to="/privacy-policy" class="font-body text-sm text-slate-500 hover:text-[#000622] transition-colors">Privacy Policy</NuxtLink>
+        <NuxtLink to="/terms-of-service" class="font-body text-sm text-slate-500 hover:text-[#000622] transition-colors">Terms of Service</NuxtLink>
       </div>
     </div>
   </footer>

@@ -15,6 +15,7 @@ export type OrderPhase =
 
 export interface InitiateOrderCommand {
   type: 'initiate'
+  userId?: string
   guestEmail: string
   items: CartItem[]
   discount: AppliedDiscount | null
@@ -56,6 +57,7 @@ export const orderActor = actor({
 
       const orderDoc: OrderDoc = {
         orderNumber: ctx.key[0],
+        userId: data.userId ? new ObjectId(data.userId) : undefined,
         guestEmail: data.guestEmail,
         status: 'pending',
         paymentStatus: 'unpaid',

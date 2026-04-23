@@ -30,10 +30,21 @@ useSeoMeta({
       </div>
 
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Appliances -->
+        <NuxtLink to="/products?category=appliances" class="group block">
+          <div class="aspect-[4/5] rounded-xl overflow-hidden mb-4 transition-transform group-hover:-translate-y-1 relative">
+            <img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&h=750&fit=crop" alt="Appliances" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
+          </div>
+          <h3 class="font-headline font-bold text-lg mb-1">Appliances</h3>
+          <p class="font-body text-sm text-on-surface-variant">Modern kitchen power.</p>
+        </NuxtLink>
+
         <!-- Blenders -->
         <NuxtLink to="/products?category=blenders" class="group block">
-          <div class="bg-[#111111] aspect-[4/5] rounded-xl flex items-center justify-center p-8 mb-4 overflow-hidden transition-transform group-hover:-translate-y-1">
-            <span class="text-white/40 block text-center italic">Blender Placeholder</span>
+          <div class="aspect-[4/5] rounded-xl overflow-hidden mb-4 transition-transform group-hover:-translate-y-1 relative">
+            <img src="https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=600&h=750&fit=crop" alt="Blenders" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
           </div>
           <h3 class="font-headline font-bold text-lg mb-1">Blenders</h3>
           <p class="font-body text-sm text-on-surface-variant">Powerful precision.</p>
@@ -41,8 +52,9 @@ useSeoMeta({
 
         <!-- Baking -->
         <NuxtLink to="/products?category=baking" class="group block">
-          <div class="bg-[#904b36] aspect-[4/5] rounded-xl flex items-center justify-center p-8 mb-4 overflow-hidden transition-transform group-hover:-translate-y-1">
-            <span class="text-white/40 block text-center italic">Baking Placeholder</span>
+          <div class="aspect-[4/5] rounded-xl overflow-hidden mb-4 transition-transform group-hover:-translate-y-1 relative">
+            <img src="https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=600&h=750&fit=crop" alt="Baking" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
           </div>
           <h3 class="font-headline font-bold text-lg mb-1">Baking</h3>
           <p class="font-body text-sm text-on-surface-variant">Perfected textures.</p>
@@ -50,20 +62,12 @@ useSeoMeta({
 
         <!-- Utensils -->
         <NuxtLink to="/products?category=utensils" class="group block">
-          <div class="bg-[#e46a3d] aspect-[4/5] rounded-xl flex items-center justify-center p-8 mb-4 overflow-hidden transition-transform group-hover:-translate-y-1">
-             <span class="text-white/40 block text-center italic">Utensils Placeholder</span>
+          <div class="aspect-[4/5] rounded-xl overflow-hidden mb-4 transition-transform group-hover:-translate-y-1 relative">
+            <img src="https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?w=600&h=750&fit=crop" alt="Utensils" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
           </div>
           <h3 class="font-headline font-bold text-lg mb-1">Utensils</h3>
           <p class="font-body text-sm text-on-surface-variant">Tactile control.</p>
-        </NuxtLink>
-
-        <!-- Toasters -->
-        <NuxtLink to="/products?category=toasters" class="group block">
-          <div class="bg-[#f0f0f0] aspect-[4/5] rounded-xl flex items-center justify-center p-8 mb-4 overflow-hidden transition-transform group-hover:-translate-y-1">
-             <span class="text-black/40 block text-center italic">Toasters Placeholder</span>
-          </div>
-          <h3 class="font-headline font-bold text-lg mb-1">Toasters</h3>
-          <p class="font-body text-sm text-on-surface-variant">Morning essentials.</p>
         </NuxtLink>
       </div>
     </section>

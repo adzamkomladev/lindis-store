@@ -20,12 +20,13 @@ definePageMeta({
   layout: 'admin'
 })
 
-const { data: stats, pending: statsPending } = await useFetch('/api/admin/stats')
-const { data: recentOrders, pending: ordersPending } = await useFetch('/api/admin/orders/recent')
-const revenuePeriod = ref('month')
-const { data: revenueData, pending: revenuePending } = await useFetch('/api/admin/revenue', {
-  query: computed(() => ({ period: revenuePeriod.value }))
-})
+  const { data: stats, pending: statsPending } = await useFetch('/api/admin/stats')
+  const { data: recentOrders, pending: ordersPending } = await useFetch('/api/admin/orders/recent')
+  const { data: topSellers, pending: topSellersPending } = await useFetch('/api/admin/top-sellers')
+  const revenuePeriod = ref('month')
+  const { data: revenueData, pending: revenuePending } = await useFetch('/api/admin/revenue', {
+    query: computed(() => ({ period: revenuePeriod.value }))
+  })
 
 const maxRevenue = computed(() => {
   if (!revenueData.value?.revenue?.length) return 1
@@ -306,47 +307,43 @@ const getStatusConfig = (status: string) => {
         <div class="bg-primary text-white rounded-xl shadow-md p-6 h-full border border-primary-container">
           <h3 class="font-headline font-medium italic text-xl mb-6">Top Sellers</h3>
 
-          <div class="space-y-6">
-            <!-- Item 1 -->
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 rounded-md bg-white/10 flex-shrink-0 flex items-center justify-center text-white/50">
-                 <span class="material-symbols-outlined text-xl">restaurant</span>
+          <div v-if="topSellersPending" class="space-y-6">
+            <div v-for="i in 3" :key="i" class="flex items-center gap-4 animate-pulse">
+              <div class="w-12 h-12 rounded-md bg-white/10"></div>
+              <div class="flex-1 space-y-2">
+                <div class="h-3 bg-white/20 w-3/4 rounded"></div>
+                <div class="h-2 bg-white/10 w-1/3 rounded"></div>
               </div>
-              <div class="flex-1 min-w-0">
-                 <h4 class="font-body text-sm font-bold truncate">Damascus Chef Knife</h4>
-                 <p class="text-[10px] font-label uppercase tracking-widest text-secondary mt-0.5">142 Sold</p>
-              </div>
-              <span class="font-body font-bold text-sm">$189.00</span>
-            </div>
-
-            <!-- Item 2 -->
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 rounded-md bg-white/10 flex-shrink-0 flex items-center justify-center text-white/50">
-                 <span class="material-symbols-outlined text-xl">blender</span>
-              </div>
-              <div class="flex-1 min-w-0">
-                 <h4 class="font-body text-sm font-bold truncate">Heritage Copper Pan</h4>
-                 <p class="text-[10px] font-label uppercase tracking-widest text-secondary mt-0.5">98 Sold</p>
-              </div>
-              <span class="font-body font-bold text-sm">$245.00</span>
-            </div>
-
-            <!-- Item 3 -->
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 rounded-md bg-white/10 flex-shrink-0 flex items-center justify-center text-white/50">
-                 <span class="material-symbols-outlined text-xl">local_cafe</span>
-              </div>
-              <div class="flex-1 min-w-0">
-                 <h4 class="font-body text-sm font-bold truncate">Stoneware Dinner Set</h4>
-                 <p class="text-[10px] font-label uppercase tracking-widest text-secondary mt-0.5">64 Sold</p>
-              </div>
-              <span class="font-body font-bold text-sm">$312.00</span>
             </div>
           </div>
-          
-          <button class="w-full mt-8 py-3 rounded-md border border-white/20 text-white font-label uppercase text-[10px] font-bold tracking-widest hover:bg-white/5 transition-colors">
+
+          <div v-else-if="topSellers?.length" class="space-y-6">
+            <NuxtLink
+              v-for="item in topSellers.slice(0, 3)"
+              :key="item.productId"
+              :to="`/products/${item.slug}`"
+              target="_blank"
+              class="flex items-center gap-4 group"
+            >
+              <div class="w-12 h-12 rounded-md bg-white/10 flex-shrink-0 flex items-center justify-center text-white/50 overflow-hidden">
+                <img v-if="item.images?.[0]" :src="`/images/${item.images[0]}`" class="w-full h-full object-cover" />
+                <span v-else class="material-symbols-outlined text-xl">restaurant</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="font-body text-sm font-bold truncate group-hover:text-secondary transition-colors">{{ item.name }}</h4>
+                <p class="text-[10px] font-label uppercase tracking-widest text-secondary mt-0.5">{{ item.totalSold }} Sold</p>
+              </div>
+              <span class="font-body font-bold text-sm">{{ new Intl.NumberFormat('en-GH', { style: 'currency', currency: 'GHS' }).format(item.price / 100) }}</span>
+            </NuxtLink>
+          </div>
+
+          <div v-else class="py-8 text-center">
+            <p class="text-sm text-white/60 font-body">No sales data yet</p>
+          </div>
+
+          <NuxtLink to="/admin/products" class="block w-full mt-8 py-3 rounded-md border border-white/20 text-white font-label uppercase text-[10px] font-bold tracking-widest hover:bg-white/5 transition-colors text-center">
             View All Products
-          </button>
+          </NuxtLink>
         </div>
       </div>
     </div>

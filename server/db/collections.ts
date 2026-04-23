@@ -7,6 +7,11 @@ import type {
   ReviewDoc,
   ReviewTokenDoc,
   DiscountCodeDoc,
+  SubscriberDoc,
+  ContactDoc,
+  AddressDoc,
+  WishlistDoc,
+  PasswordResetTokenDoc,
 } from './types'
 
 /**
@@ -22,6 +27,11 @@ export function collections() {
     reviews: db.collection<ReviewDoc>('reviews'),
     reviewTokens: db.collection<ReviewTokenDoc>('reviewTokens'),
     discountCodes: db.collection<DiscountCodeDoc>('discountCodes'),
+    subscribers: db.collection<SubscriberDoc>('subscribers'),
+    contacts: db.collection<ContactDoc>('contacts'),
+    addresses: db.collection<AddressDoc>('addresses'),
+    wishlist: db.collection<WishlistDoc>('wishlist'),
+    passwordResetTokens: db.collection<PasswordResetTokenDoc>('passwordResetTokens'),
   }
 }
 

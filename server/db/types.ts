@@ -94,6 +94,7 @@ export interface OrderItemDoc {
 export interface OrderDoc {
   _id?: ObjectId
   orderNumber: string                                // unique index, prefix "ls-"
+  userId?: ObjectId                                  // linked customer account (optional for guest checkout)
   guestEmail: string
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
   paymentStatus: 'unpaid' | 'paid' | 'refunded'
@@ -185,6 +186,71 @@ export interface DiscountCodeDoc {
   startsAt?: Date
   expiresAt?: Date
   isActive: boolean
+  createdAt: Date
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Input / helper types
+// ─────────────────────────────────────────────────────────────────────────────
+export type CreateProductInput = Omit<ProductDoc, '_id' | 'createdAt' | 'updatedAt' | 'reviewStats'>
+
+export type UpdateProductInput = Partial<Omit<ProductDoc, '_id' | 'createdAt' | 'updatedAt'>>
+
+// ─────────────────────────────────────────────────────────────────────────────
+// subscribers — newsletter subscribers (separate from users)
+// ─────────────────────────────────────────────────────────────────────────────
+export interface SubscriberDoc {
+  _id?: ObjectId
+  email: string                                      // unique index
+  subscribedAt: Date
+  unsubscribedAt?: Date
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// contacts — customer inquiries via contact form
+// ─────────────────────────────────────────────────────────────────────────────
+export interface ContactDoc {
+  _id?: ObjectId
+  name: string
+  email: string
+  subject: string
+  message: string
+  status: 'new' | 'read' | 'replied'
+  createdAt: Date
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// addresses — saved shipping addresses per customer
+// ─────────────────────────────────────────────────────────────────────────────
+export interface AddressDoc {
+  _id?: ObjectId
+  userId: ObjectId                                   // index
+  name: string
+  phone: string
+  address: string
+  city: string
+  isDefault: boolean
+  createdAt: Date
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// wishlist — saved products per customer
+// ─────────────────────────────────────────────────────────────────────────────
+export interface WishlistDoc {
+  _id?: ObjectId
+  userId: ObjectId                                   // index
+  productId: ObjectId                                // index
+  createdAt: Date
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// passwordResetTokens — forgot password tokens (TTL expiry)
+// ─────────────────────────────────────────────────────────────────────────────
+export interface PasswordResetTokenDoc {
+  _id?: ObjectId
+  userId: ObjectId
+  token: string                                      // unique index
+  expiresAt: Date                                    // TTL index
   createdAt: Date
 }
 

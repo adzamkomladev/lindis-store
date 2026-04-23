@@ -1,16 +1,24 @@
 const authenticatedRoutes = [
   { path: "/admin", exact: false },
+  { path: "/account", exact: false },
 ]
 
 const publicRoutes = [
-  "/admin/login",
+  { path: "/admin/login", exact: true },
+  { path: "/login", exact: true },
+  { path: "/register", exact: true },
+  { path: "/forgot-password", exact: true },
+  { path: "/reset-password", exact: false },
 ]
 
 export default defineNuxtRouteMiddleware(async (to) => {
   const url = to.path
 
   // Skip public routes
-  if (publicRoutes.includes(url)) {
+  const isPublic = publicRoutes.some((route) =>
+    route.exact ? url === route.path : url.startsWith(route.path)
+  )
+  if (isPublic) {
     return
   }
 
@@ -38,11 +46,21 @@ export default defineNuxtRouteMiddleware(async (to) => {
     })
   }
 
-  // Check if user is admin
-  if (user.value?.role !== 'admin') {
+  // Route-specific role checks
+  const isAdminRoute = url.startsWith('/admin')
+  const isAccountRoute = url.startsWith('/account')
+
+  if (isAdminRoute && user.value?.role !== 'admin') {
     return navigateTo({
       path: "/admin/login",
       query: { redirect: url, error: "unauthorized" },
+    })
+  }
+
+  if (isAccountRoute && user.value?.role !== 'customer') {
+    return navigateTo({
+      path: "/login",
+      query: { redirect: url },
     })
   }
 })

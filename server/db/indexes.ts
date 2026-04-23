@@ -26,11 +26,17 @@ export async function createIndexes(db: Db): Promise<void> {
     { type: 1, status: 1 },
     { name: 'products_type_status' }
   )
+  // Text search across name, description, category
+  await products.createIndex(
+    { name: 'text', description: 'text', category: 'text' },
+    { name: 'products_text_search', weights: { name: 10, description: 5, category: 2 } }
+  )
 
   // ── orders ────────────────────────────────────────────────────────────────
   const orders = db.collection('orders')
   await orders.createIndex({ orderNumber: 1 }, { unique: true, name: 'orders_number_unique' })
   await orders.createIndex({ guestEmail: 1 }, { name: 'orders_guest_email' })
+  await orders.createIndex({ userId: 1, createdAt: -1 }, { name: 'orders_user_date' })
   await orders.createIndex(
     { status: 1, paymentStatus: 1 },
     { name: 'orders_status_payment' }
@@ -61,6 +67,34 @@ export async function createIndexes(db: Db): Promise<void> {
   await discountCodes.createIndex(
     { isActive: 1, expiresAt: 1 },
     { name: 'discount_codes_active_expiry' }
+  )
+
+  // ── subscribers ───────────────────────────────────────────────────────────
+  const subscribers = db.collection('subscribers')
+  await subscribers.createIndex({ email: 1 }, { unique: true, name: 'subscribers_email_unique' })
+
+  // ── contacts ──────────────────────────────────────────────────────────────
+  const contacts = db.collection('contacts')
+  await contacts.createIndex({ createdAt: -1 }, { name: 'contacts_created_desc' })
+  await contacts.createIndex({ status: 1 }, { name: 'contacts_status' })
+
+  // ── addresses ─────────────────────────────────────────────────────────────
+  const addresses = db.collection('addresses')
+  await addresses.createIndex({ userId: 1 }, { name: 'addresses_user' })
+
+  // ── wishlist ──────────────────────────────────────────────────────────────
+  const wishlist = db.collection('wishlist')
+  await wishlist.createIndex(
+    { userId: 1, productId: 1 },
+    { unique: true, name: 'wishlist_user_product_unique' }
+  )
+
+  // ── passwordResetTokens ───────────────────────────────────────────────────
+  const passwordResetTokens = db.collection('passwordResetTokens')
+  await passwordResetTokens.createIndex({ token: 1 }, { unique: true, name: 'reset_tokens_unique' })
+  await passwordResetTokens.createIndex(
+    { expiresAt: 1 },
+    { expireAfterSeconds: 0, name: 'reset_tokens_ttl' }
   )
 
   console.log('[MongoDB] Indexes created successfully')

@@ -108,6 +108,29 @@ const shippingDetails = computed(() => {
   }
 })
 
+const { addToCart } = useCart()
+const reorder = async () => {
+  if (!order.value) return
+  try {
+    const { items } = await $fetch('/api/orders/reorder', {
+      method: 'POST',
+      body: { orderId: orderId },
+    })
+    for (const item of items) {
+      addToCart({
+        _id: item.id,
+        name: item.name,
+        slug: item.slug,
+        price: item.price,
+        images: item.image ? [item.image] : [],
+      }, item.quantity)
+    }
+    navigateTo('/cart')
+  } catch (err: any) {
+    console.error('Reorder failed:', err)
+  }
+}
+
 // Order timeline steps
 const timelineSteps = computed(() => {
   if (!order.value) return []
@@ -175,6 +198,7 @@ const timelineSteps = computed(() => {
               size="sm"
               variant="outline"
               class="gap-2 border-blue-200 text-blue-600 hover:bg-blue-50"
+              @click="reorder"
             >
               <Repeat class="w-4 h-4" />
               <span class="hidden sm:inline">Reorder</span>

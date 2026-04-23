@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { Package } from 'lucide-vue-next'
 import ProductGallery from '@/components/ProductGallery.vue'
 import ProductInfo from '@/components/ProductInfo.vue'
 import ProductTabs from '@/components/products/ProductTabs.vue'
 import RelatedProducts from '@/components/products/RelatedProducts.vue'
+import ProductWishlistButton from '@/components/products/ProductWishlistButton.vue'
 
 const route = useRoute()
 const { data: product, error } = await useFetch(`/api/products/${route.params.slug}`)
@@ -18,6 +20,34 @@ if (error.value || !product.value) {
 useSeoMeta({
   title: `${product.value.name} | Lindi's Store`,
   description: product.value.description
+})
+
+// Recently viewed tracking
+const recentlyViewed = ref<any[]>([])
+
+onMounted(() => {
+  if (!import.meta.client || !product.value) return
+  const STORAGE_KEY = 'lindis-recently-viewed'
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    let list: any[] = raw ? JSON.parse(raw) : []
+    // Remove current product if already in list
+    list = list.filter((p: any) => p.slug !== product.value.slug)
+    // Add current product to front
+    list.unshift({
+      slug: product.value.slug,
+      name: product.value.name,
+      price: product.value.price,
+      images: product.value.images,
+      category: product.value.category,
+    })
+    // Keep only last 6
+    list = list.slice(0, 6)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
+    recentlyViewed.value = list.filter(p => p.slug !== product.value.slug).slice(0, 4)
+  } catch {
+    // ignore
+  }
 })
 </script>
 
@@ -61,6 +91,13 @@ useSeoMeta({
 
         <!-- Right/Bottom: Sticky Product Info -->
         <div class="lg:col-span-5 mt-12 lg:mt-0 lg:sticky lg:top-28">
+          <div class="flex items-start justify-between gap-4 mb-4">
+            <div class="flex-1">
+              <p class="text-secondary font-label font-bold uppercase tracking-widest text-[10px] mb-2">{{ product.category }}</p>
+              <h1 class="font-headline font-bold text-3xl text-on-surface">{{ product.name }}</h1>
+            </div>
+            <ProductWishlistButton v-if="product.id" :product-id="product.id" />
+          </div>
           <ProductInfo :product="product" />
 
           <!-- Mobile: Product Tabs -->
@@ -112,6 +149,33 @@ useSeoMeta({
         :products="relatedProducts"
         title="Ecosystem Pairing"
       />
+    </div>
+
+    <!-- Recently Viewed -->
+    <div v-if="recentlyViewed.length" class="max-w-screen-2xl mx-auto px-8 pb-24">
+      <h2 class="font-headline font-black text-on-surface mb-8 tracking-tighter" style="font-size: 1.75rem">Recently Viewed</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <NuxtLink
+          v-for="item in recentlyViewed"
+          :key="item.slug"
+          :to="`/products/${item.slug}`"
+          class="block group"
+        >
+          <div class="aspect-square bg-surface-container-low rounded-lg overflow-hidden mb-3 border border-outline-variant/10">
+            <img
+              v-if="item.images?.[0]"
+              :src="`/images/${item.images[0]}`"
+              :alt="item.name"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div v-else class="w-full h-full flex items-center justify-center text-outline-variant">
+              <Package class="w-8 h-8" />
+            </div>
+          </div>
+          <p class="font-body font-bold text-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1">{{ item.name }}</p>
+          <p class="text-xs text-on-surface-variant font-body">{{ new Intl.NumberFormat('en-GH', { style: 'currency', currency: 'GHS' }).format(item.price / 100) }}</p>
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>
