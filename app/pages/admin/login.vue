@@ -1,0 +1,177 @@
+<script setup lang="ts">
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
+import { loginSchema } from '~~/schemas/auth.schema'
+import { LogIn, Eye, EyeOff } from 'lucide-vue-next'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+
+definePageMeta({
+  layout: false
+})
+
+const { login } = useAuth()
+const { handleSubmit, isSubmitting, errors, defineField } = useForm({
+  validationSchema: toTypedSchema(loginSchema)
+})
+
+const [email, emailAttrs] = defineField('email')
+const [password, passwordAttrs] = defineField('password')
+const loginError = ref('')
+const showPassword = ref(false)
+
+const onSubmit = handleSubmit(async (values) => {
+  loginError.value = ''
+  try {
+    await login(values)
+    navigateTo('/admin')
+  } catch (error: any) {
+    loginError.value = error?.data?.message || 'Invalid credentials. Please try again.'
+  }
+})
+</script>
+
+<template>
+  <div class="min-h-screen flex bg-background">
+
+    <!-- Left Panel: Editorial Brand Image -->
+    <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col justify-end p-12">
+      <!-- Background Image -->
+      <NuxtImg src="/login_hero.png" alt="Lindi's Store Kitchen" class="absolute inset-0 w-full h-full object-cover" />
+      
+      <!-- Gradient Overlay for text readability -->
+      <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent"></div>
+
+      <!-- Text Content -->
+      <div class="relative z-10 max-w-md">
+        <blockquote class="font-headline font-medium text-white text-3xl leading-snug mb-6 opacity-90 italic">
+          "The kitchen is the soul of the home, where heritage is tasted and memories are seasoned."
+        </blockquote>
+        <div class="flex items-center gap-4">
+          <span class="text-white/70 font-label text-xs uppercase tracking-[0.2em]">Lindi's Store - The Culinary Editorial</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel: Login Form -->
+    <div class="flex-1 flex flex-col justify-between p-8 lg:p-16">
+      
+      <!-- Empty div for spacing if we want to center the form vertically but still have footer -->
+      <div class="hidden lg:block"></div>
+
+      <!-- Form Container -->
+      <div class="w-full max-w-sm mx-auto">
+
+        <!-- Mobile logo -->
+        <div class="lg:hidden mb-10 text-center">
+          <NuxtImg src="/img/normal-logo.png" alt="Lindi's Store" class="h-9 w-auto mx-auto mb-1" />
+        </div>
+
+        <!-- Form header -->
+        <div class="mb-10">
+          <h2 class="font-headline font-bold text-on-surface text-4xl mb-2">
+            Welcome Back
+          </h2>
+          <p class="text-on-surface-variant font-body text-sm">Continue your culinary journey.</p>
+        </div>
+
+        <!-- Error Alert -->
+        <div v-if="loginError" class="mb-6 p-4 rounded-sm bg-red-50 text-red-700 text-sm font-body">
+          {{ loginError }}
+        </div>
+
+        <!-- Form -->
+        <form @submit="onSubmit" class="space-y-6">
+
+          <!-- Email -->
+          <div class="space-y-2">
+            <label for="email" class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label block">
+              Email Address
+            </label>
+            <input
+              id="email"
+              v-model="email"
+              v-bind="emailAttrs"
+              type="email"
+              autocomplete="email"
+              placeholder="henry@culinaryheritage.com"
+              class="w-full bg-surface-container-low rounded-sm border-0 py-3 px-4 text-sm font-body focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant"
+            />
+            <p v-if="errors.email" class="text-xs text-red-600 font-body">{{ errors.email }}</p>
+          </div>
+
+          <!-- Password -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center">
+              <label for="password" class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label block">
+                Password
+              </label>
+              <a href="#" class="text-xs text-secondary hover:text-primary transition-colors font-body">Forgot Password?</a>
+            </div>
+            
+            <div class="relative">
+              <input
+                id="password"
+                v-model="password"
+                v-bind="passwordAttrs"
+                :type="showPassword ? 'text' : 'password'"
+                autocomplete="current-password"
+                placeholder="••••••••"
+                class="w-full bg-surface-container-low rounded-sm border-0 py-3 px-4 pr-10 text-sm font-body focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant text-on-surface"
+              />
+              <button
+                type="button"
+                @click="showPassword = !showPassword"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors"
+              >
+                <EyeOff v-if="showPassword" class="w-4 h-4" />
+                <Eye v-else class="w-4 h-4" />
+              </button>
+            </div>
+            <p v-if="errors.password" class="text-xs text-red-600 font-body">{{ errors.password }}</p>
+          </div>
+
+          <!-- Remember Me -->
+          <div class="flex items-center gap-2 pt-2 pb-4">
+            <input type="checkbox" id="remember" class="w-4 h-4 rounded-sm border-outline-variant text-primary focus:ring-primary/20 accent-primary" />
+            <label for="remember" class="text-xs text-on-surface-variant font-body cursor-pointer">Remember this device</label>
+          </div>
+
+          <!-- Submit -->
+          <button
+            type="submit"
+            :disabled="isSubmitting"
+            class="w-full py-4 rounded-md font-label font-bold uppercase tracking-widest text-sm btn-primary flex items-center justify-center gap-3 disabled:opacity-60"
+          >
+            <div v-if="isSubmitting" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            {{ isSubmitting ? 'Signing In...' : 'Sign In' }}
+          </button>
+          
+          <div class="text-center pt-4">
+              <p class="text-sm font-body text-on-surface-variant">New to Lindi's Store? <a href="#" class="text-secondary hover:text-primary transition-colors">Create Account</a></p>
+          </div>
+
+          <!-- Icons -->
+          <div class="flex justify-center gap-6 pt-6 text-on-surface-variant/40">
+             <!-- Kitchen icons from outline -->
+             <span class="material-symbols-outlined text-xl">restaurant</span>
+             <span class="material-symbols-outlined text-xl">blender</span>
+             <span class="material-symbols-outlined text-xl">local_shipping</span>
+          </div>
+
+        </form>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="flex justify-between items-center text-[10px] text-on-surface-variant/60 font-label uppercase tracking-widest mt-16 pt-6 border-t border-outline-variant/30">
+        <p>© {{ new Date().getFullYear() }} Lindi's Store - The Culinary Editorial</p>
+        <div class="hidden md:flex gap-6">
+            <a href="#" class="hover:text-primary transition-colors">Journal</a>
+            <a href="#" class="hover:text-primary transition-colors">Our Heritage</a>
+            <a href="#" class="hover:text-primary transition-colors">Sustainability</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</template>
