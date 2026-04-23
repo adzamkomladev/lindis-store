@@ -105,8 +105,10 @@ export const cartActor = actor({
       const discount = await discountCodes.findOne({
         code: code.toUpperCase(),
         isActive: true,
-        $or: [{ expiresAt: { $exists: false } }, { expiresAt: { $gt: now } }],
-        $or: [{ startsAt: { $exists: false } }, { startsAt: { $lte: now } }],
+        $and: [
+          { $or: [{ expiresAt: { $exists: false } }, { expiresAt: { $gt: now } }] },
+          { $or: [{ startsAt: { $exists: false } }, { startsAt: { $lte: now } }] },
+        ],
       })
 
       if (!discount) throw new UserError('Invalid or expired discount code', { code: 'invalid_discount' })

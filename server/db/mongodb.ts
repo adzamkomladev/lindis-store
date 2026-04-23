@@ -17,9 +17,9 @@ export async function connectDB(): Promise<Db> {
     maxPoolSize: 50,             // Based on expected concurrent requests
     minPoolSize: 10,             // Pre-warmed connections for traffic spikes
     maxIdleTimeMS: 300_000,      // 5 min — stable server benefits from persistent connections
-    connectTimeoutMS: 5_000,     // Fail fast on connection issues
+    connectTimeoutMS: 10_000,    // Allow time for remote network latency
     socketTimeoutMS: 30_000,     // Prevent hanging queries
-    serverSelectionTimeoutMS: 5_000,
+    serverSelectionTimeoutMS: 10_000,
   })
 
   await client.connect()
