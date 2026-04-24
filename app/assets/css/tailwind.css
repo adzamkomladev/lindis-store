@@ -8,10 +8,11 @@
   --font-headline: "Noto Serif", ui-serif, Georgia, serif;
 
   /* Radius — softer shapes per design system */
-  --radius-sm: 0.5rem;   /* 8px for inputs */
-  --radius-md: 0.75rem;  /* 12px for buttons */
+  --radius-sm: 0.5rem;   /* 8px for inputs, small UI */
+  --radius-md: 0.75rem;  /* 12px for buttons (soft-tactile) */
   --radius-lg: 1rem;     /* 16px for cards/images */
-  --radius-xl: 1.5rem;
+  --radius-xl: 1.5rem;   /* 24px for large surfaces */
+  --radius-2xl: 2rem;    /* 32px for extra large */
   --radius-full: 9999px;
 
   /* Shadcn token mappings → new design tokens */

@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
     data-slot="button"
     :as="as"
     :as-child="asChild"
-    :class="cn(buttonVariants({ variant, size }), props.class)"
+    :class="cn(buttonVariants({ variant, size }), variant === 'default' && 'bg-gradient-to-b from-primary-container to-primary shadow-sm', props.class)"
   >
     <slot />
   </Primitive>
