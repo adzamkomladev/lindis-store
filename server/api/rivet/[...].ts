@@ -4,7 +4,7 @@ import { registry } from '~/server/rivet/registry'
 /**
  * Catch-all route for Rivet Engine HTTP endpoints.
  *
- * The Rivet Engine (rivet.yebi.africa) calls:
+ * The Rivet Cloud Engine (api.rivet.dev) calls:
  *   GET /api/rivet/metadata  — to discover the runner
  *   GET /api/rivet/start     — to start an actor on this runner
  *

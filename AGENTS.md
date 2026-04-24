@@ -26,8 +26,8 @@
 ```
 MONGODB_URI            — MongoDB connection string
 MONGODB_DB_NAME        — Database name (default: lindis-store)
-RIVET_ENDPOINT         — RivetKit runner endpoint
-RIVET_RUNNER           — Runner name (default: lindis-store)
+RIVET_ENDPOINT         — Rivet Cloud private endpoint (format: https://namespace:sk_token@api.rivet.dev)
+RIVET_PUBLIC_ENDPOINT  — Rivet Cloud public endpoint for client-side connections (format: https://namespace:pk_token@api.rivet.dev)
 PAYSTACK_SECRET_KEY    — Paystack API secret
 R2_ACCOUNT_ID          — Cloudflare R2 account
 R2_ACCESS_KEY_ID       — R2 access key

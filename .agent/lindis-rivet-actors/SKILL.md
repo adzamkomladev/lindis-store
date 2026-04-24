@@ -241,7 +241,6 @@ import { myActor } from './actors/my-actor'
 
 export const registry = setup({
   endpoint: process.env.RIVET_ENDPOINT,
-  runner: { runnerName: process.env.RIVET_RUNNER || 'lindis-store' },
   use: {
     // ... existing actors
     myActor,

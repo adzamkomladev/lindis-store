@@ -51,11 +51,18 @@ export default defineNuxtConfig({
     prefix: '',
     componentDir: '@/components/ui',
   },
+  image: {
+    provider: 'cloudflare',
+    cloudflare: {
+      baseURL: process.env.R2_PUBLIC_URL
+    }
+  },
   runtimeConfig: {
     // Server-only secrets
     mongodbUri: process.env.MONGODB_URI,
     mongodbDbName: process.env.MONGODB_DB_NAME,
     rivetEndpoint: process.env.RIVET_ENDPOINT,
+    rivetPublicEndpoint: process.env.RIVET_PUBLIC_ENDPOINT,
     paystackSecretKey: process.env.PAYSTACK_SECRET_KEY,
     r2AccountId: process.env.R2_ACCOUNT_ID,
     r2AccessKeyId: process.env.R2_ACCESS_KEY_ID,
