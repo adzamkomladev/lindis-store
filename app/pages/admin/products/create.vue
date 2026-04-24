@@ -160,16 +160,34 @@ const onSubmit = handleSubmit(async (values) => {
             </div>
             <div class="p-6">
               <div class="grid grid-cols-2 gap-4">
-                <div v-for="spec in [
-                  { label: 'Material', model: specMaterial, attrs: specMaterialAttrs, placeholder: 'e.g. Stainless Steel' },
-                  { label: 'Capacity', model: specCapacity, attrs: specCapacityAttrs, placeholder: 'e.g. 500ml' },
-                  { label: 'Dimensions', model: specDimensions, attrs: specDimensionsAttrs, placeholder: 'e.g. 7cm x 25cm' },
-                  { label: 'Weight', model: specWeight, attrs: specWeightAttrs, placeholder: 'e.g. 200g' },
-                  { label: 'Insulation', model: specInsulation, attrs: specInsulationAttrs, placeholder: 'e.g. Double-wall vacuum' },
-                  { label: 'Temp Retention', model: specTempRetention, attrs: specTempRetentionAttrs, placeholder: 'e.g. 24h hot / 36h cold' },
-                ]" :key="spec.label" class="space-y-1.5">
-                  <label class="text-xs font-body text-[#757681] block">{{ spec.label }}</label>
-                  <input v-model="spec.model.value" v-bind="spec.attrs" :placeholder="spec.placeholder"
+                <div class="space-y-1.5">
+                  <label class="text-xs font-body text-[#757681] block">Material</label>
+                  <input v-model="specMaterial" v-bind="specMaterialAttrs" placeholder="e.g. Stainless Steel"
+                    class="w-full border border-[#c5c6d1] bg-[#f8f9fa] px-3 py-2 text-sm font-body focus:outline-none focus:border-[#000622] transition-colors" />
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-xs font-body text-[#757681] block">Capacity</label>
+                  <input v-model="specCapacity" v-bind="specCapacityAttrs" placeholder="e.g. 500ml"
+                    class="w-full border border-[#c5c6d1] bg-[#f8f9fa] px-3 py-2 text-sm font-body focus:outline-none focus:border-[#000622] transition-colors" />
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-xs font-body text-[#757681] block">Dimensions</label>
+                  <input v-model="specDimensions" v-bind="specDimensionsAttrs" placeholder="e.g. 7cm x 25cm"
+                    class="w-full border border-[#c5c6d1] bg-[#f8f9fa] px-3 py-2 text-sm font-body focus:outline-none focus:border-[#000622] transition-colors" />
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-xs font-body text-[#757681] block">Weight</label>
+                  <input v-model="specWeight" v-bind="specWeightAttrs" placeholder="e.g. 200g"
+                    class="w-full border border-[#c5c6d1] bg-[#f8f9fa] px-3 py-2 text-sm font-body focus:outline-none focus:border-[#000622] transition-colors" />
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-xs font-body text-[#757681] block">Insulation</label>
+                  <input v-model="specInsulation" v-bind="specInsulationAttrs" placeholder="e.g. Double-wall vacuum"
+                    class="w-full border border-[#c5c6d1] bg-[#f8f9fa] px-3 py-2 text-sm font-body focus:outline-none focus:border-[#000622] transition-colors" />
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-xs font-body text-[#757681] block">Temp Retention</label>
+                  <input v-model="specTempRetention" v-bind="specTempRetentionAttrs" placeholder="e.g. 24h hot / 36h cold"
                     class="w-full border border-[#c5c6d1] bg-[#f8f9fa] px-3 py-2 text-sm font-body focus:outline-none focus:border-[#000622] transition-colors" />
                 </div>
               </div>
