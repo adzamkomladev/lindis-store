@@ -1,5 +1,5 @@
 import { actor, event, UserError } from 'rivetkit'
-import type { ProductDoc } from '~/server/db/types'
+import type { SerializedProduct } from '~/server/db/types'
 
 export interface CartItem {
   productId: string
@@ -40,10 +40,9 @@ export const cartActor = actor({
     cartUpdated: event<{ items: CartItem[]; subtotal: number; total: number }>(),
   },
   actions: {
-    addItem: async (c, product: Pick<ProductDoc, '_id' | 'name' | 'slug' | 'images' | 'price'>, qty: number) => {
-      // Validate stock via inventoryActor actor-to-actor call
+    addItem: async (c, product: Pick<SerializedProduct, '_id' | 'name' | 'slug' | 'images' | 'price'>, qty: number) => {
       const client = c.client<typeof import('../registry').registry>()
-      const productId = product._id!.toString()
+      const productId = product._id
       const stock = await client.inventoryActor.getOrCreate(['main']).getStock(productId)
 
       const existingQty = c.state.items.find(i => i.productId === productId)?.quantity ?? 0

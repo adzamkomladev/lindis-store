@@ -34,5 +34,5 @@ export default defineEventHandler(async (event) => {
   }
 
   const result = await discountCodes.insertOne(doc as any)
-  return { ...doc, _id: result.insertedId }
+  return { ...doc, _id: result.insertedId.toString() }
 })

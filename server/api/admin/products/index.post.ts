@@ -78,7 +78,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const result = await products.insertOne(product as any)
-    const created = { ...product, _id: result.insertedId }
+    const created = { ...product, _id: result.insertedId.toString() }
 
     return created
   }

@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
 
     // Sync inventory count to inventoryActor
     await rivet.inventoryActor.getOrCreate(['main']).setStock(
-      product._id!.toString(),
+      product._id,
       product.inventoryCount
     )
 
@@ -77,6 +77,6 @@ export default defineEventHandler(async (event) => {
     }
 
     const result = await products.insertOne(productDoc as any)
-    return { ...productDoc, _id: result.insertedId }
+    return { ...productDoc, _id: result.insertedId.toString() }
   }
 })

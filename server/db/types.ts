@@ -190,13 +190,6 @@ export interface DiscountCodeDoc {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Input / helper types
-// ─────────────────────────────────────────────────────────────────────────────
-export type CreateProductInput = Omit<ProductDoc, '_id' | 'createdAt' | 'updatedAt' | 'reviewStats'>
-
-export type UpdateProductInput = Partial<Omit<ProductDoc, '_id' | 'createdAt' | 'updatedAt'>>
-
-// ─────────────────────────────────────────────────────────────────────────────
 // subscribers — newsletter subscribers (separate from users)
 // ─────────────────────────────────────────────────────────────────────────────
 export interface SubscriberDoc {
@@ -252,6 +245,25 @@ export interface PasswordResetTokenDoc {
   token: string                                      // unique index
   expiresAt: Date                                    // TTL index
   createdAt: Date
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Serialization types — for RivetKit actor state (ObjectIds → strings)
+// ─────────────────────────────────────────────────────────────────────────────
+export type SerializedProduct = Omit<ProductDoc, '_id'> & { _id: string }
+
+export function serializeProduct(p: ProductDoc): SerializedProduct {
+  return {
+    ...p,
+    _id: p._id!.toString(),
+  }
+}
+
+export type SerializedOrderItem = Omit<OrderItemDoc, 'productId'> & { productId: string }
+
+export type SerializedOrder = Omit<OrderDoc, '_id' | 'items'> & {
+  _id: string
+  items: SerializedOrderItem[]
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

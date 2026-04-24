@@ -16,7 +16,9 @@ export const inventoryActor = actor({
       const { products } = collections()
       const all = await products.find({ status: 'active' }).project({ _id: 1, inventoryCount: 1 }).toArray()
       for (const p of all) {
-        c.state.stock[p._id!.toString()] = p.inventoryCount
+        const id = p._id!
+        const hex = typeof id === 'string' ? id : id.toString()
+        c.state.stock[hex] = p.inventoryCount
       }
       console.log(`[InventoryActor] Loaded stock for ${all.length} products`)
     } catch (err) {

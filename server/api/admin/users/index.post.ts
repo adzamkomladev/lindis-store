@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
 
   return {
     success: true,
-    user: { _id: result.insertedId, email: body.email, name: body.name, role },
+    user: { _id: result.insertedId.toString(), email: body.email, name: body.name, role },
     temporaryPassword: generatedPassword,
   }
 })

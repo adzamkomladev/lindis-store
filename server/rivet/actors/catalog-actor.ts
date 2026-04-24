@@ -1,6 +1,7 @@
 import { actor, event, UserError } from 'rivetkit'
-import type { ObjectId } from 'mongodb'
-import type { ProductDoc, CreateProductInput, UpdateProductInput } from '~/server/db/types'
+import type { CreateProductInput, UpdateProductInput } from '~/server/db/types'
+import type { SerializedProduct } from '~/server/db/types'
+import { serializeProduct } from '~/server/db/types'
 import { collections } from '~/server/db/collections'
 
 type ProductFilters = {
@@ -10,10 +11,10 @@ type ProductFilters = {
 }
 
 interface CatalogState {
-  products: ProductDoc[]
-  bySlug: Record<string, ProductDoc>
-  featured: ProductDoc[]
-  byCategory: Record<string, ProductDoc[]>
+  products: SerializedProduct[]
+  bySlug: Record<string, SerializedProduct>
+  featured: SerializedProduct[]
+  byCategory: Record<string, SerializedProduct[]>
   lastSynced: number
 }
 
@@ -23,12 +24,14 @@ async function buildIndexFromDB(state: CatalogState): Promise<void> {
     .sort({ createdAt: -1 })
     .toArray()
 
-  state.products = allProducts
+  const serialized = allProducts.map(serializeProduct)
+
+  state.products = serialized
   state.bySlug = {}
   state.featured = []
   state.byCategory = {}
 
-  for (const p of allProducts) {
+  for (const p of serialized) {
     state.bySlug[p.slug] = p
     if (p.isFeatured && p.status === 'active') {
       state.featured.push(p)
@@ -44,14 +47,14 @@ async function buildIndexFromDB(state: CatalogState): Promise<void> {
 export const catalogActor = actor({
   options: { name: 'Product Catalog', icon: '🏪' },
   state: {
-    products: [] as ProductDoc[],
-    bySlug: {} as Record<string, ProductDoc>,
-    featured: [] as ProductDoc[],
-    byCategory: {} as Record<string, ProductDoc[]>,
+    products: [] as SerializedProduct[],
+    bySlug: {} as Record<string, SerializedProduct>,
+    featured: [] as SerializedProduct[],
+    byCategory: {} as Record<string, SerializedProduct[]>,
     lastSynced: 0,
   } as CatalogState,
   events: {
-    productUpdated: event<{ slug: string; product: ProductDoc | null }>(),
+    productUpdated: event<{ slug: string; product: SerializedProduct | null }>(),
     catalogRefreshed: event<void>(),
   },
   onCreate: async (c) => {
@@ -60,11 +63,9 @@ export const catalogActor = actor({
       console.log(`[CatalogActor] Loaded ${c.state.products.length} products into memory`)
     } catch (err) {
       console.error('[CatalogActor] Failed to load from DB on create:', err)
-      // Actor survives with empty state; can be refreshed later via admin action
     }
   },
   actions: {
-    // ── READ actions (in-memory, sub-ms) ──────────────────────────────────
     getProducts: (c, filters?: ProductFilters) => {
       let results = c.state.products
       if (filters?.status) {
@@ -102,17 +103,15 @@ export const catalogActor = actor({
       }).slice(0, 20)
     },
 
-    // ── WRITE actions (mutate state + persist to MongoDB) ─────────────────
-    createProduct: async (c, data: CreateProductInput): Promise<ProductDoc> => {
+    createProduct: async (c, data: CreateProductInput): Promise<SerializedProduct> => {
       const { products: col } = collections()
 
-      // Check slug uniqueness in state first (fast)
       if (c.state.bySlug[data.slug]) {
         throw new UserError('Product with this slug already exists', { code: 'slug_taken' })
       }
 
       const now = new Date()
-      const product: ProductDoc = {
+      const product = {
         ...data,
         reviewStats: { averageRating: 0, totalCount: 0 },
         createdAt: now,
@@ -120,9 +119,8 @@ export const catalogActor = actor({
       }
 
       const result = await col.insertOne(product as any)
-      const inserted = { ...product, _id: result.insertedId }
+      const inserted = serializeProduct({ ...product, _id: result.insertedId })
 
-      // Update in-memory indexes
       c.state.products.unshift(inserted)
       c.state.bySlug[inserted.slug] = inserted
       if (inserted.isFeatured && inserted.status === 'active') {
@@ -137,25 +135,22 @@ export const catalogActor = actor({
       return inserted
     },
 
-    updateProduct: async (c, id: string, data: UpdateProductInput): Promise<ProductDoc> => {
+    updateProduct: async (c, id: string, data: UpdateProductInput): Promise<SerializedProduct> => {
       const { products: col } = collections()
       const { ObjectId } = await import('mongodb')
 
-      const objectId = new ObjectId(id)
-      const existing = c.state.products.find(p => p._id?.toString() === id)
+      const existing = c.state.products.find(p => p._id === id)
       if (!existing) throw new UserError('Product not found', { code: 'not_found' })
 
       const now = new Date()
-      const updated = { ...existing, ...data, updatedAt: now }
+      const updated: SerializedProduct = { ...existing, ...data, updatedAt: now }
 
-      await col.updateOne({ _id: objectId }, { $set: { ...data, updatedAt: now } })
+      await col.updateOne({ _id: new ObjectId(id) }, { $set: { ...data, updatedAt: now } })
 
-      // Rebuild in-memory indexes
-      const idx = c.state.products.findIndex(p => p._id?.toString() === id)
+      const idx = c.state.products.findIndex(p => p._id === id)
       if (idx !== -1) c.state.products[idx] = updated
       c.state.bySlug[updated.slug] = updated
 
-      // Rebuild featured + byCategory
       c.state.featured = c.state.products.filter(p => p.isFeatured && p.status === 'active')
       c.state.byCategory = {}
       for (const p of c.state.products) {
@@ -171,27 +166,25 @@ export const catalogActor = actor({
       const { products: col } = collections()
       const { ObjectId } = await import('mongodb')
 
-      const existing = c.state.products.find(p => p._id?.toString() === id)
+      const existing = c.state.products.find(p => p._id === id)
       if (!existing) throw new UserError('Product not found', { code: 'not_found' })
 
       await col.deleteOne({ _id: new ObjectId(id) })
 
-      // Remove from in-memory state
-      c.state.products = c.state.products.filter(p => p._id?.toString() !== id)
+      c.state.products = c.state.products.filter(p => p._id !== id)
       delete c.state.bySlug[existing.slug]
-      c.state.featured = c.state.featured.filter(p => p._id?.toString() !== id)
+      c.state.featured = c.state.featured.filter(p => p._id !== id)
       if (c.state.byCategory[existing.category]) {
         c.state.byCategory[existing.category] = c.state.byCategory[existing.category].filter(
-          p => p._id?.toString() !== id
+          p => p._id !== id
         )
       }
 
       c.broadcast('productUpdated', { slug: existing.slug, product: null })
     },
 
-    // Called by reviewWorker — Computed Pattern
     updateReviewStats: (c, productId: string, stats: { averageRating: number; totalCount: number }) => {
-      const idx = c.state.products.findIndex(p => p._id?.toString() === productId)
+      const idx = c.state.products.findIndex(p => p._id === productId)
       if (idx === -1) return
 
       c.state.products[idx] = { ...c.state.products[idx], reviewStats: stats }
@@ -201,7 +194,6 @@ export const catalogActor = actor({
       }
     },
 
-    // Full rebuild from MongoDB (admin action or recovery)
     refresh: async (c) => {
       await buildIndexFromDB(c.state)
       c.broadcast('catalogRefreshed', undefined)
