@@ -326,7 +326,7 @@ const getStatusConfig = (status: string) => {
               class="flex items-center gap-4 group"
             >
               <div class="w-12 h-12 rounded-md bg-white/10 flex-shrink-0 flex items-center justify-center text-white/50 overflow-hidden">
-                <img v-if="item.images?.[0]" :src="`/images/${item.images[0]}`" class="w-full h-full object-cover" />
+                <NuxtImg v-if="item.images?.[0]" :src="item.images[0]" class="w-full h-full object-cover" />
                 <span v-else class="material-symbols-outlined text-xl">restaurant</span>
               </div>
               <div class="flex-1 min-w-0">

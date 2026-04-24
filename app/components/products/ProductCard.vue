@@ -21,7 +21,7 @@ const formatPrice = (amount: number) => {
     <NuxtLink :to="`/products/${product.slug}`" class="relative aspect-square overflow-hidden bg-stone-50">
       <NuxtImg
         v-if="product.images && product.images.length"
-        :src="`/images/${product.images[0]}`"
+        :src="product.images[0]"
         :alt="product.name"
         class="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
       />

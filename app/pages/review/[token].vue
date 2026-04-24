@@ -151,9 +151,9 @@ const formatPrice = (amount: number) =>
             <!-- Item info -->
             <div class="flex items-center gap-3 mb-4">
               <div class="w-14 h-14 rounded-xl border border-border overflow-hidden bg-muted flex-shrink-0">
-                <img
+                <NuxtImg
                   v-if="item.productImages?.[0]"
-                  :src="`/images/${item.productImages[0]}`"
+                  :src="item.productImages[0]"
                   :alt="item.productName"
                   class="w-full h-full object-cover"
                 />

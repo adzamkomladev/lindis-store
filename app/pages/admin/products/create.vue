@@ -125,7 +125,7 @@ const onSubmit = handleSubmit(async (values) => {
             <div class="p-6">
               <div v-if="uploadedImages.length" class="grid grid-cols-3 gap-3 mb-4">
                 <div v-for="(img, idx) in uploadedImages" :key="idx" class="relative aspect-square border border-[#c5c6d1]/20 overflow-hidden group">
-                  <img :src="`/images/${img}`" class="w-full h-full object-cover" />
+                  <NuxtImg :src="img" class="w-full h-full object-cover" />
                   <div class="absolute inset-0 bg-[#000622]/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <button type="button" @click="removeImage(idx)" class="w-9 h-9 bg-red-500 text-white flex items-center justify-center">
                       <X class="w-4 h-4" />

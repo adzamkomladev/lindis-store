@@ -82,7 +82,7 @@ useSeoMeta({
           >
             <NuxtImg
               v-if="recommendations[0].images?.length"
-              :src="`/images/${recommendations[0].images[0]}`"
+              :src="recommendations[0].images[0]"
               :alt="recommendations[0].name"
               class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 absolute inset-0"
             />
@@ -104,7 +104,7 @@ useSeoMeta({
             <div class="relative h-full">
               <NuxtImg
                 v-if="product.images?.length"
-                :src="`/images/${product.images[0]}`"
+                :src="product.images[0]"
                 :alt="product.name"
                 class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
               />

@@ -23,7 +23,7 @@ const formatPrice = (amount: number) => {
       <div class="h-12 w-12 md:h-16 md:w-16 bg-stone-100 md:bg-stone-50 rounded-md md:rounded-lg border border-stone-100 overflow-hidden shrink-0">
         <NuxtImg 
           v-if="item.image"
-          :src="`/images/${item.image}`" 
+          :src="item.image" 
           :alt="item.name"
           class="h-full w-full object-contain mix-blend-multiply" 
         />

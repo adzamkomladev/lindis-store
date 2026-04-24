@@ -285,9 +285,9 @@ const timelineSteps = computed(() => {
                 >
                   <div class="flex items-start gap-3 md:gap-4 w-full">
                     <div class="w-16 h-16 md:w-20 md:h-20 rounded-lg md:rounded-xl bg-white border border-stone-200 overflow-hidden flex-shrink-0">
-                      <img 
+                      <NuxtImg 
                         v-if="item.productImages?.[0]" 
-                        :src="`/images/${item.productImages[0]}`" 
+                        :src="item.productImages[0]" 
                         :alt="item.productName"
                         class="w-full h-full object-cover"
                       />

@@ -41,7 +41,7 @@ const formatPrice = (amount: number) => {
           <div class="aspect-[3/4] bg-[#edeeef] overflow-hidden mb-6">
             <NuxtImg
               v-if="product.images?.length"
-              :src="`/images/${product.images[0]}`"
+              :src="product.images[0]"
               :alt="product.name"
               class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
             />

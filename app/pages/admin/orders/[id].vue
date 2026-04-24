@@ -209,9 +209,9 @@ const verifyPayment = async () => {
               class="flex gap-4 p-5"
             >
               <div class="w-16 h-16 bg-[#f3f4f5] overflow-hidden shrink-0 flex items-center justify-center">
-                <img 
+                <NuxtImg 
                   v-if="item.productImages?.[0]" 
-                  :src="`/images/${item.productImages[0]}`" 
+                  :src="item.productImages[0]" 
                   :alt="item.productName"
                   class="w-full h-full object-cover"
                 />

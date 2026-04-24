@@ -162,9 +162,9 @@ onMounted(() => {
           class="block group"
         >
           <div class="aspect-square bg-surface-container-low rounded-lg overflow-hidden mb-3 border border-outline-variant/10">
-            <img
+            <NuxtImg
               v-if="item.images?.[0]"
-              :src="`/images/${item.images[0]}`"
+              :src="item.images[0]"
               :alt="item.name"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />

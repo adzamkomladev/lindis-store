@@ -236,9 +236,9 @@ const visiblePages = computed(() => {
           class="bg-white border border-[#c5c6d1]/20 overflow-hidden group"
         >
           <div class="aspect-square bg-[#f3f4f5] relative overflow-hidden">
-            <img
+            <NuxtImg
               v-if="product.images?.length"
-              :src="`/images/${product.images[0]}`"
+              :src="product.images[0]"
               :alt="product.name"
               class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
             />
@@ -318,7 +318,7 @@ const visiblePages = computed(() => {
             <td class="px-6 py-4">
               <div class="flex items-center gap-4">
                 <div class="w-11 h-11 bg-[#f3f4f5] overflow-hidden shrink-0 flex items-center justify-center">
-                  <img v-if="product.images?.length" :src="`/images/${product.images[0]}`" :alt="product.name" class="w-full h-full object-cover" />
+                  <NuxtImg v-if="product.images?.length" :src="product.images[0]" :alt="product.name" class="w-full h-full object-cover" />
                   <Package v-else class="w-5 h-5 text-[#c5c6d1]" />
                 </div>
                 <div>

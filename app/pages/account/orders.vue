@@ -57,7 +57,7 @@ const formatDate = (date: string | Date) => {
             :key="item.productSlug"
             class="w-12 h-12 bg-[#f3f4f5] rounded border border-[#c5c6d1]/10 overflow-hidden"
           >
-            <img v-if="item.productImages?.[0]" :src="`/images/${item.productImages[0]}`" class="w-full h-full object-cover" />
+            <NuxtImg v-if="item.productImages?.[0]" :src="item.productImages[0]" class="w-full h-full object-cover" />
             <Package v-else class="w-6 h-6 text-[#c5c6d1] m-3" />
           </div>
         </div>

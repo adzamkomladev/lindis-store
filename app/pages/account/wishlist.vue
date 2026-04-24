@@ -35,7 +35,7 @@ const remove = async (productId: string) => {
         class="bg-white border border-[#c5c6d1]/20 p-4 flex gap-4"
       >
         <NuxtLink :to="`/products/${item.slug}`" class="w-24 h-24 bg-[#f3f4f5] shrink-0 overflow-hidden">
-          <img v-if="item.images?.[0]" :src="`/images/${item.images[0]}`" class="w-full h-full object-cover" />
+          <NuxtImg v-if="item.images?.[0]" :src="item.images[0]" class="w-full h-full object-cover" />
           <Package v-else class="w-8 h-8 text-[#c5c6d1] m-8" />
         </NuxtLink>
         <div class="flex-1 min-w-0">

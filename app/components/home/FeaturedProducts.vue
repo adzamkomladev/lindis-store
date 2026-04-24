@@ -35,7 +35,7 @@ const sideProducts = computed(() => props.products?.slice(1, 3) ?? [])
           <NuxtLink :to="`/products/${product.slug}`" class="block aspect-square overflow-hidden bg-surface-container-low rounded-lg mb-6 relative">
             <NuxtImg
               v-if="product.images?.length"
-              :src="`/images/${product.images[0]}`"
+              :src="product.images[0]"
               :alt="product.name"
               class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />

@@ -23,9 +23,9 @@ const prev = () => {
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <!-- Large hero image (spans both columns on mobile, 2 cols on md) -->
     <div class="md:col-span-2 overflow-hidden aspect-[4/5] bg-[#f3f4f5] group relative">
-      <img
+      <NuxtImg
         v-if="selectedImage"
-        :src="`/images/${selectedImage}`"
+        :src="selectedImage"
         :alt="`Product image`"
         class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
       />
@@ -72,8 +72,8 @@ const prev = () => {
         :class="idx === selectedIndex ? 'ring-2 ring-[#000622]' : 'hover:opacity-80 transition-opacity'"
         @click="selectedIndex = idx"
       >
-        <img
-          :src="`/images/${img}`"
+        <NuxtImg
+          :src="img"
           :alt="`Product view ${idx + 1}`"
           class="w-full h-full object-cover"
         />

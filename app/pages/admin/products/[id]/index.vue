@@ -219,7 +219,7 @@ const ordersVisiblePages = computed(() => {
             <div class="p-4">
               <div v-if="data?.product?.images?.length" class="space-y-3">
                 <div v-for="(img, idx) in data.product.images" :key="idx" class="relative aspect-square border border-[#c5c6d1]/20 overflow-hidden">
-                  <img :src="`/images/${img}`" :alt="`${data.product.name} ${idx+1}`" class="w-full h-full object-cover" />
+                  <NuxtImg :src="img" :alt="`${data.product.name} ${idx+1}`" class="w-full h-full object-cover" />
                   <span v-if="idx === 0" class="absolute top-2 left-2 bg-[#000622] text-[#b1c6ff] text-[10px] font-label font-bold uppercase px-2 py-0.5">Primary</span>
                 </div>
               </div>
