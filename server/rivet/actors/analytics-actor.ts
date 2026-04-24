@@ -77,14 +77,20 @@ export const analyticsActor = actor({
     lastRefreshed: 0,
   },
   onCreate: async (c) => {
-    const stats = await fetchStats()
-    c.state.dashboard = stats.dashboard
-    c.state.chart = stats.chart
-    c.state.lastRefreshed = Date.now()
+    try {
+      const stats = await fetchStats()
+      c.state.dashboard = stats.dashboard
+      c.state.chart = stats.chart
+      c.state.lastRefreshed = Date.now()
 
-    // Schedule hourly refresh
-    c.schedule.after(60 * 60 * 1000, 'scheduledRefresh')
-    console.log('[AnalyticsActor] Initialized with stats')
+      // Schedule hourly refresh
+      c.schedule.after(60 * 60 * 1000, 'scheduledRefresh')
+      console.log('[AnalyticsActor] Initialized with stats')
+    } catch (err) {
+      console.error('[AnalyticsActor] Failed to load stats from DB on create:', err)
+      // Actor survives with zeroed state; scheduled refresh will retry
+      c.schedule.after(60 * 60 * 1000, 'scheduledRefresh')
+    }
   },
   actions: {
     getDashboardStats: (c) => c.state.dashboard,

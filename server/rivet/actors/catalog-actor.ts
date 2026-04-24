@@ -55,8 +55,13 @@ export const catalogActor = actor({
     catalogRefreshed: event<void>(),
   },
   onCreate: async (c) => {
-    await buildIndexFromDB(c.state)
-    console.log(`[CatalogActor] Loaded ${c.state.products.length} products into memory`)
+    try {
+      await buildIndexFromDB(c.state)
+      console.log(`[CatalogActor] Loaded ${c.state.products.length} products into memory`)
+    } catch (err) {
+      console.error('[CatalogActor] Failed to load from DB on create:', err)
+      // Actor survives with empty state; can be refreshed later via admin action
+    }
   },
   actions: {
     // ── READ actions (in-memory, sub-ms) ──────────────────────────────────

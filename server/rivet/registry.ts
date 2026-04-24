@@ -30,6 +30,9 @@ export const registry = setup({
   runner: {
     runnerName: process.env.RIVET_RUNNER || 'lindis-store',
   },
+  // Versioning is required for production so Rivet can distinguish
+  // old deployments from new ones and drain stale runners safely.
+  version: process.env.RIVET_RUNNER_VERSION || '1',
   use: {
     catalogActor,
     inventoryActor,

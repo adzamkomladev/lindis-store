@@ -10,14 +10,19 @@ export const inventoryActor = actor({
     lowStock: event<{ productId: string; count: number; threshold: number }>(),
   },
   onCreate: async (c) => {
-    // Load stock counts from MongoDB products
-    const { collections } = await import('~/server/db/collections')
-    const { products } = collections()
-    const all = await products.find({ status: 'active' }).project({ _id: 1, inventoryCount: 1 }).toArray()
-    for (const p of all) {
-      c.state.stock[p._id!.toString()] = p.inventoryCount
+    try {
+      // Load stock counts from MongoDB products
+      const { collections } = await import('~/server/db/collections')
+      const { products } = collections()
+      const all = await products.find({ status: 'active' }).project({ _id: 1, inventoryCount: 1 }).toArray()
+      for (const p of all) {
+        c.state.stock[p._id!.toString()] = p.inventoryCount
+      }
+      console.log(`[InventoryActor] Loaded stock for ${all.length} products`)
+    } catch (err) {
+      console.error('[InventoryActor] Failed to load stock from DB on create:', err)
+      // Actor survives with empty stock; will be populated on first reserve/setStock
     }
-    console.log(`[InventoryActor] Loaded stock for ${all.length} products`)
   },
   actions: {
     /**

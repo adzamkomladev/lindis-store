@@ -1,13 +1,12 @@
 import { initiateOrderSchema } from '~~/schemas/order.schema'
 import { nanoid } from 'nanoid'
-import { useRivet } from '~/server/rivet/client'
+import { useRivet, isRivetRunnerUnavailable } from '~/server/rivet/client'
 import { ObjectId } from 'mongodb'
 
 export default defineEventHandler(async (event) => {
   const body = await readValidatedBody(event, initiateOrderSchema.parse)
   const config = useRuntimeConfig()
   const { initializeTransaction } = usePaystack()
-  const rivet = useRivet()
 
   // Check if customer is logged in
   const session = await getUserSession(event)
@@ -65,29 +64,41 @@ export default defineEventHandler(async (event) => {
   })
 
   // 5. Kick off the order workflow actor (creates order, reserves inventory)
-  const orderActor = rivet.orderActor.getOrCreate([orderNumber])
-  await orderActor.commands.push({
-    type: 'initiate',
-    userId: userId?.toString(),
-    guestEmail: body.email,
-    items: body.items.map((item: any) => ({
-      productId: item.id,
-      productName: item.name,
-      productSlug: item.slug,
-      productImages: item.images ?? [],
-      price: item.price,
-      quantity: item.quantity,
-      customText: item.customText,
-    })),
-    discount,
-    shippingDetails: {
-      name: body.name,
-      phone: body.phone,
-      address: body.address,
-      city: body.city,
-    },
-    paystackReference: reference,
-  })
+  try {
+    const rivet = useRivet()
+    const orderActor = rivet.orderActor.getOrCreate([orderNumber])
+    await orderActor.commands.push({
+      type: 'initiate',
+      userId: userId?.toString(),
+      guestEmail: body.email,
+      items: body.items.map((item: any) => ({
+        productId: item.id,
+        productName: item.name,
+        productSlug: item.slug,
+        productImages: item.images ?? [],
+        price: item.price,
+        quantity: item.quantity,
+        customText: item.customText,
+      })),
+      discount,
+      shippingDetails: {
+        name: body.name,
+        phone: body.phone,
+        address: body.address,
+        city: body.city,
+      },
+      paystackReference: reference,
+    })
+  } catch (error) {
+    if (!isRivetRunnerUnavailable(error)) throw error
+
+    console.warn(`[Rivet] Order actor unavailable for ${orderNumber}. Payment initialized but order workflow deferred.`)
+    // Return 503 so the frontend can retry or show an error
+    throw createError({
+      statusCode: 503,
+      statusMessage: 'Order service temporarily unavailable. Please try again.',
+    })
+  }
 
   return {
     url: paystackData.authorization_url,

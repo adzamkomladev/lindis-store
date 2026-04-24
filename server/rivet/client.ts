@@ -20,6 +20,13 @@ export function useRivet() {
   })
 }
 
-export function isRivetRunnerUnavailable(error: unknown) {
-  return error instanceof Error && /No runners with name .* are available/i.test(error.message)
+export function isRivetRunnerUnavailable(error: unknown): boolean {
+  if (!(error instanceof Error)) return false
+  const msg = error.message
+  return (
+    /No runners with name .* are available/i.test(msg) ||
+    /runner_pool_error/i.test(msg) ||
+    /ActorSchedulingError/i.test(msg) ||
+    /actor_runner_failed/i.test(msg)
+  )
 }
