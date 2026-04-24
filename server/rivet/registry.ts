@@ -25,7 +25,8 @@ import { settingsActor } from './actors/settings-actor'
  */
 export const registry = setup({
   // Explicitly pass endpoint — Nitro's bundler may not propagate process.env
-  // for RivetKit's internal env var reads, causing it to default to localhost:6420
+  // for RivetKit's internal env var reads, causing it to default to localhost:6420.
+  // Self-hosted Rivet Engine: https://komla:token@rivet.yebi.africa
   endpoint: process.env.RIVET_ENDPOINT,
   // Versioning is required for production so Rivet can distinguish
   // old deployments from new ones and drain stale runners safely.

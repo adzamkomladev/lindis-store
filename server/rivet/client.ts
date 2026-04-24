@@ -5,10 +5,11 @@ import { registry } from './registry'
  * Create a Rivet client for use in Nuxt API routes.
  *
  * Important: this must be a runtime import, not `import type`, so the
- * registry module is evaluated and `registry.startRunner()` registers the runner.
+ * registry module is evaluated and the serverless handler is registered.
  *
  * createClient() automatically reads RIVET_ENDPOINT from env.
  * Defaults to http://localhost:6420 in development.
+ * Production: connects to self-hosted engine at rivet.yebi.africa
  *
  * Usage in API routes:
  *   const rivet = useRivet()
