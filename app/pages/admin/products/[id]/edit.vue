@@ -21,7 +21,7 @@ const editProductSchema = z.object({
   price: z.number().min(0),
   inventoryCount: z.number().min(0),
   status: z.enum(['draft', 'active', 'archived']),
-  isFeatured: z.boolean().default(true),
+  isFeatured: z.boolean(),
   specMaterial: z.string().optional(),
   specCapacity: z.string().optional(),
   specDimensions: z.string().optional(),

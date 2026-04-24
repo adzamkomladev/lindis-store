@@ -5,7 +5,7 @@ const objectIdString = z.string().regex(/^[a-f\d]{24}$/i, 'Invalid ID')
 
 export const reviewQuerySchema = z.object({
   cursor: z.string().optional(),  // ObjectId string cursor (was: coerce.number)
-  limit: z.coerce.number().min(1).max(50).default(10),
+  limit: z.coerce.number().min(1).max(50).optional(),
 })
 
 export const reviewValidateSchema = z.object({

@@ -9,7 +9,7 @@ export const setupSchema = z.object({
 export const createUserSchema = z.object({
   email: z.string().email(),
   name: z.string().min(1),
-  role: z.enum(['admin', 'customer']).default('customer'),
+  role: z.enum(['admin', 'customer']).optional(),
 });
 
 export const updateUserSchema = z.object({

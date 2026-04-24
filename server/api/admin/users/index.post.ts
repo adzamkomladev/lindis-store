@@ -11,6 +11,8 @@ export default defineEventHandler(async (event) => {
   await requireUserSession(event)
   const body = await readValidatedBody(event, createUserSchema.parse)
 
+  const role = body.role ?? 'customer'
+
   const { users } = collections()
 
   const existing = await users.findOne({ email: body.email })
@@ -22,7 +24,7 @@ export default defineEventHandler(async (event) => {
   const result = await users.insertOne({
     email: body.email,
     name: body.name,
-    role: body.role,
+    role: role,
     credentials: [
       {
         provider: 'local',
@@ -47,7 +49,7 @@ export default defineEventHandler(async (event) => {
 
   return {
     success: true,
-    user: { _id: result.insertedId, email: body.email, name: body.name, role: body.role },
+    user: { _id: result.insertedId, email: body.email, name: body.name, role },
     temporaryPassword: generatedPassword,
   }
 })

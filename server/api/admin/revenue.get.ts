@@ -6,7 +6,8 @@ import { connectDB } from '~/server/db/mongodb'
 export default defineEventHandler(async (event) => {
   await requireUserSession(event)
 
-  const { period } = await getValidatedQuery(event, revenueQuerySchema.parse)
+  const query = await getValidatedQuery(event, revenueQuerySchema.parse)
+  const period = query.period ?? 'month'
 
   try {
     const rivet = useRivet()

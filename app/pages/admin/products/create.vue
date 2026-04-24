@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
-import { productSchema } from '~~/schemas/product.schema'
+import { productSchema, type ProductInput } from '~~/schemas/product.schema'
 import { ArrowLeft, Upload, X, Loader2, ImagePlus, Package, DollarSign, Layers, Sparkles, ListChecks } from 'lucide-vue-next'
 import { Switch } from '@/components/ui/switch'
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select'
@@ -9,9 +9,16 @@ import { Textarea } from '@/components/ui/textarea'
 
 definePageMeta({ layout: 'admin' })
 
-const { handleSubmit, isSubmitting, errors, defineField } = useForm({
+const { handleSubmit, isSubmitting, errors, defineField } = useForm<ProductInput>({
   validationSchema: toTypedSchema(productSchema),
-  initialValues: { status: 'draft', isFeatured: true }
+  initialValues: {
+    status: 'draft',
+    isFeatured: false,
+    category: 'other',
+    name: '',
+    price: 0,
+    inventoryCount: 0,
+  },
 })
 
 const [name, nameAttrs] = defineField('name')

@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
   if (!productId) throw createError({ statusCode: 400, message: 'Product ID is required' })
 
   const query = await getValidatedQuery(event, reviewQuerySchema.parse)
+  const limit = query.limit ?? 10
   const { reviews, products } = collections()
 
   if (!ObjectId.isValid(productId)) {
@@ -24,10 +25,10 @@ export default defineEventHandler(async (event) => {
   const reviewsList = await reviews
     .find(filter)
     .sort({ createdAt: -1 })
-    .limit(query.limit + 1)
+    .limit(limit + 1)
     .toArray()
 
-  const hasMore = reviewsList.length > query.limit
+  const hasMore = reviewsList.length > limit
   const items = hasMore ? reviewsList.slice(0, query.limit) : reviewsList
   const nextCursor = hasMore ? items[items.length - 1]?._id?.toString() ?? null : null
 

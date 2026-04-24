@@ -21,7 +21,7 @@ export const createDiscountCodeSchema = z.object({
   categoryName: z.string().optional().nullable(),
   startsAt: z.string().datetime().optional().nullable().transform(v => v ? new Date(v) : null),
   expiresAt: z.string().datetime().optional().nullable().transform(v => v ? new Date(v) : null),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean().optional(),
 })
 
 export const updateDiscountCodeSchema = z.object({

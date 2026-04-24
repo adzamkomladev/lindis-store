@@ -6,9 +6,8 @@ export const productSchema = z.object({
   price: z.coerce.number().min(0.01, 'Price must be greater than 0'),
   inventoryCount: z.coerce.number().int().min(0, 'Inventory cannot be negative'),
   images: z.array(z.string()).optional(),
-  status: z.enum(['draft', 'active', 'archived']).default('draft'),
-  isFeatured: z.boolean().default(false),
-  // Kitchen store — category required
+  status: z.enum(['draft', 'active', 'archived']),
+  isFeatured: z.boolean(),
   category: z.enum([
     'blenders',
     'baking',
@@ -18,8 +17,7 @@ export const productSchema = z.object({
     'appliances',
     'storage',
     'other'
-  ]).default('other'),
-  // Specifications
+  ]),
   specMaterial: z.string().optional(),
   specCapacity: z.string().optional(),
   specDimensions: z.string().optional(),
