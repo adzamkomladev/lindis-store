@@ -27,9 +27,6 @@ export const registry = setup({
   // Explicitly pass endpoint — Nitro's bundler may not propagate process.env
   // for RivetKit's internal env var reads, causing it to default to localhost:6420
   endpoint: process.env.RIVET_ENDPOINT,
-  runner: {
-    runnerName: process.env.RIVET_RUNNER || 'lindis-store',
-  },
   // Versioning is required for production so Rivet can distinguish
   // old deployments from new ones and drain stale runners safely.
   version: process.env.RIVET_RUNNER_VERSION || '1',
