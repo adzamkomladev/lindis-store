@@ -4,7 +4,7 @@ import { z } from 'zod'
 const settingsUpdateSchema = z.object({
   settings: z.array(z.object({
     key: z.string(),
-    value: z.any(),
+    value: z.string(),
   })),
 })
 
@@ -14,9 +14,22 @@ export default defineEventHandler(async (event) => {
 
   try {
     const rivet = useRivet()
+    
+    // Transform array to object format for actor
     const updates: Record<string, any> = {}
     for (const { key, value } of body.settings) {
-      updates[key] = value
+      // Map frontend keys to actor keys
+      const keyMap: Record<string, string> = {
+        store_name: 'storeName',
+        support_email: 'storeEmail',
+        currency: 'currency',
+        banner_text: 'bannerText',
+        notif_order: 'notifOrder',
+        notif_new: 'notifNew',
+        notif_stock: 'notifStock',
+      }
+      const actorKey = keyMap[key] || key
+      updates[actorKey] = value
     }
 
     const updated = await rivet.settingsActor.getOrCreate(['main']).update(updates)

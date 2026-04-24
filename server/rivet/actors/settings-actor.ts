@@ -9,6 +9,9 @@ interface SiteSettings {
   currency: string
   currencySymbol: string
   lowStockThreshold: number
+  notifOrder: string
+  notifNew: string
+  notifStock: string
 }
 
 const DEFAULT_SETTINGS: SiteSettings = {
@@ -18,6 +21,9 @@ const DEFAULT_SETTINGS: SiteSettings = {
   currency: 'GHS',
   currencySymbol: '₵',
   lowStockThreshold: 5,
+  notifOrder: 'true',
+  notifNew: 'true',
+  notifStock: 'false',
 }
 
 export const settingsActor = actor({
