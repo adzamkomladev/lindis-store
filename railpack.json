@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "steps": {
+    "build": {
+      "commands": [
+        {
+          "cmd": "sh -c 'rm -rf .nuxt .output && bun run build'",
+          "customName": "clean build (clear Nuxt cache)"
+        }
+      ],
+      "caches": []
+    }
+  }
+}
