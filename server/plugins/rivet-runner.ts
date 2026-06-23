@@ -65,6 +65,7 @@ async function ensureNormalRunnerPool(): Promise<boolean> {
     // Check if any datacenter is configured as serverless
     const datacenters = defaultConfig.datacenters || {}
     let hasServerless = false
+    let hasPoolError = false
     const issues: string[] = []
 
     for (const [dcName, dcConfig] of Object.entries(datacenters) as [string, any][]) {
@@ -73,36 +74,58 @@ async function ensureNormalRunnerPool(): Promise<boolean> {
         issues.push(`datacenter "${dcName}" is SERVERLESS (URL: ${dcConfig.serverless.url})`)
       }
       if (dcConfig.runner_pool_error) {
+        hasPoolError = true
         issues.push(`datacenter "${dcName}" has error: ${JSON.stringify(dcConfig.runner_pool_error)}`)
       }
     }
 
-    if (!hasServerless) {
+    // Healthy if normal kind with no pool error
+    if (!hasServerless && !hasPoolError) {
       console.log('[Rivet] Runner pool is already configured as normal kind ✓')
       if (issues.length > 0) {
-        console.warn('[Rivet] Pool issues found:', issues.join('; '))
+        console.warn('[Rivet] Pool issues found (non-fatal):', issues.join('; '))
       }
       return true
+    }
+
+    // If we have a pool error but no serverless, log it — the pool exists,
+    // it just had a previous failed runner attempt. The auto-fix below will
+    // re-assert the normal config and clear the error.
+    if (!hasServerless && hasPoolError) {
+      console.warn('[Rivet] ⚠ Pool has stored error from a previous failed attempt:', issues.join('; '))
+      console.log('[Rivet] Re-asserting normal kind to clear stale error state...')
     }
 
     // Fix: switch to normal kind
     console.warn('[Rivet] ⚠ Pool is configured as SERVERLESS kind:', issues.join('; '))
     console.log('[Rivet] Fixing runner pool — switching to normal kind...')
+    console.log(`[Rivet]   PUT ${apiUrl}/runner-configs/default?namespace=${namespace}`)
 
-    await $fetch(
-      `${apiUrl}/runner-configs/default?namespace=${namespace}`,
-      {
-        method: 'PUT',
-        headers: { ...authHeader, 'Content-Type': 'application/json' },
-        body: {
-          datacenters: {
-            default: {
-              normal: {},
+    try {
+      const putRes = await $fetch(
+        `${apiUrl}/runner-configs/default?namespace=${namespace}`,
+        {
+          method: 'PUT',
+          headers: { ...authHeader, 'Content-Type': 'application/json' },
+          body: {
+            datacenters: {
+              default: {
+                normal: {},
+              },
             },
           },
-        },
-      }
-    )
+        }
+      )
+      console.log('[Rivet]   PUT response:', JSON.stringify(putRes))
+      console.log('[Rivet] Runner pool switched to normal kind ✓')
+    } catch (putError: any) {
+      console.error('[Rivet] ✗ PUT /runner-configs/default FAILED:')
+      console.error('[Rivet]   status:', putError?.statusCode || putError?.status)
+      console.error('[Rivet]   message:', putError?.message || putError)
+      console.error('[Rivet]   data:', JSON.stringify(putError?.data || putError?.response?._data || null))
+      console.error('[Rivet]   headers:', JSON.stringify(putError?.response?.headers || null))
+      throw putError
+    }
 
     // Refresh metadata so the engine picks up the new config
     try {
@@ -119,7 +142,6 @@ async function ensureNormalRunnerPool(): Promise<boolean> {
       console.warn('[Rivet] Failed to refresh metadata (non-critical):', (refreshError as Error).message)
     }
 
-    console.log('[Rivet] Runner pool switched to normal kind ✓')
     return true
   } catch (error) {
     const errMsg = (error as Error).message
@@ -187,6 +209,91 @@ async function verifyRunnerConnected(): Promise<void> {
 }
 
 /**
+ * Probe WebSocket reachability to the engine's /runners/connect endpoint.
+ *
+ * The envoy opens a WSS connection to {endpoint}/runners/connect. If anything
+ * blocks this connection (firewall, DNS, TLS, auth, wrong path), the runner
+ * never registers and every actor call returns `no_runners_available`. We
+ * probe the same path with a short-timeout WS handshake so failures are
+ * visible at startup instead of silently breaking actor routing later.
+ *
+ * Returns true if the WS handshake completes (or times out cleanly),
+ * false on hard failure (DNS, TCP refused, TLS error, 4xx, etc).
+ */
+async function probeWebSocketReachability(): Promise<boolean> {
+  const parsed = parseRivetEndpoint()
+  if (!parsed) return false
+
+  const { apiUrl, namespace, token } = parsed
+  const wsBase = apiUrl.replace(/^http/, 'ws')
+  const probeUrl = `${wsBase}/runners/connect?protocol_version=1&namespace=${encodeURIComponent(namespace)}&runner_key=__probe__`
+  const protocols = token ? ['rivet', `rivet_token.${token}`] : ['rivet']
+
+  console.log(`[Rivet]   Probing: ${wsBase}/runners/connect?protocol_version=1&namespace=${namespace}&runner_key=__probe__`)
+
+  return new Promise<boolean>((resolve) => {
+    let settled = false
+    const finish = (ok: boolean, reason: string) => {
+      if (settled) return
+      settled = true
+      console.log(`[Rivet]   Probe result: ${ok ? 'OK' : 'FAILED'} — ${reason}`)
+      resolve(ok)
+    }
+
+    let ws: any
+    try {
+      // Try global WebSocket first (Bun, browsers), then fall back to ws package (Node).
+      // The SDK imports its own WS module — we use whatever is available to us
+      // at probe time. We don't need a real connection, just a successful
+      // handshake (open event) or a clean close.
+      const WS = (globalThis as any).WebSocket
+      if (!WS) {
+        finish(false, 'no WebSocket constructor available globally; skipping probe (Bun missing?)')
+        return
+      }
+      ws = new WS(probeUrl, protocols)
+    } catch (e) {
+      finish(false, `constructor threw: ${(e as Error).message}`)
+      return
+    }
+
+    const timeout = setTimeout(() => {
+      try { ws?.close() } catch {}
+      // Timeout on a probe is a *good* sign: it means TCP+TLS+WS-handshake
+      // reached the engine. The engine then keeps the WS open waiting for
+      // ToServerInit, which we never send. We treat that as "reachable".
+      finish(true, 'no open event in 5s — assumed reachable (engine holding WS open)')
+    }, 5000)
+
+    try {
+      ws.addEventListener('open', () => {
+        clearTimeout(timeout)
+        try { ws.close(1000, 'probe') } catch {}
+        finish(true, 'WS handshake succeeded')
+      })
+      ws.addEventListener('error', (ev: any) => {
+        clearTimeout(timeout)
+        finish(false, `WS error event: ${ev?.message || ev?.toString?.() || 'unknown'}`)
+      })
+      ws.addEventListener('close', (ev: any) => {
+        clearTimeout(timeout)
+        // 4xx close codes mean the engine rejected the WS (auth, bad path).
+        // 1xxx transport codes mean the network path is broken.
+        if (ev?.code >= 4000 && ev?.code < 5000) {
+          finish(false, `WS closed with code ${ev.code} (${ev.reason || 'no reason'})`)
+        } else {
+          // Clean close (1000, 1001, 1006) without open = likely DNS/TCP failure
+          finish(false, `WS closed code=${ev?.code} reason=${ev?.reason || 'unknown'} (no open event)`)
+        }
+      })
+    } catch (e) {
+      clearTimeout(timeout)
+      finish(false, `addEventListener threw: ${(e as Error).message}`)
+    }
+  })
+}
+
+/**
  * Nitro plugin — starts the RivetKit envoy on server startup.
  *
  * The envoy opens a persistent WebSocket to the Rivet Engine
@@ -203,6 +310,7 @@ async function verifyRunnerConnected(): Promise<void> {
  * On startup, this plugin:
  * 1. Waits for MongoDB to be ready (actors need DB access in onCreate)
  * 2. Checks and fixes the engine's runner pool config (serverless → normal)
+ * 2.5 Probes WebSocket reachability to engine (catches network/TLS/auth issues)
  * 3. Starts the envoy WebSocket connection
  * 4. After 15s delay, verifies the runner is visible to the engine
  *
@@ -232,6 +340,24 @@ export default defineNitroPlugin(async () => {
   const poolOk = await ensureNormalRunnerPool()
   if (!poolOk) {
     console.warn('[Rivet] Step 2/4: Pool config check failed — will retry after envoy starts')
+  }
+
+  // Step 2.5: Verify WebSocket reachability to engine before starting envoy
+  // The runner envoy opens a WS to {endpoint}/runners/connect — if that fails
+  // (firewall, DNS, TLS, auth), startEnvoy() returns successfully but the
+  // runner never registers and every actor call gets `no_runners_available`.
+  console.log('[Rivet] Step 2.5/4: Probing WebSocket reachability to engine...')
+  const wsReachable = await probeWebSocketReachability()
+  if (!wsReachable) {
+    console.error('[Rivet] Step 2.5/4: ✗ WebSocket probe FAILED — runner registration will not work.')
+    console.error('[Rivet]   This usually means:')
+    console.error('[Rivet]     - Firewall blocking outbound WSS from VPS to rivet.yebi.africa:443')
+    console.error('[Rivet]     - DNS cannot resolve rivet.yebi.africa')
+    console.error('[Rivet]     - TLS handshake failing (cert mismatch, SNI issue)')
+    console.error('[Rivet]     - RIVET_ENDPOINT token is invalid (401 on WS upgrade)')
+    console.error('[Rivet]   Continuing anyway — startEnvoy() will retry in background.')
+  } else {
+    console.log('[Rivet] Step 2.5/4: Engine WebSocket reachable ✓')
   }
 
   // Step 3: Start the envoy
