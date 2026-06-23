@@ -68,6 +68,10 @@ export const registry = setup({
   // RIVET_RUNNER_VERSION is mapped to RIVET_ENVOY_VERSION above;
   // the envoy config picks it up automatically.
   version: process.env.RIVET_RUNNER_VERSION || '1',
+  // For serverless mode: tell the SDK where the engine can reach this app.
+  // Without this, the SDK defaults to http://127.0.0.1:6420/ and rejects
+  // all serverless start requests as "endpoint mismatch".
+  publicEndpoint: process.env.NUXT_PUBLIC_SITE_URL || `http://127.0.0.1:${process.env.NITRO_PORT || process.env.PORT || 3000}`,
   use: {
     catalogActor,
     inventoryActor,
