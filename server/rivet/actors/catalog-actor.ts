@@ -2,7 +2,6 @@ import { actor, event, UserError } from 'rivetkit'
 import type { CreateProductInput, UpdateProductInput } from '~/server/db/types'
 import type { SerializedProduct } from '~/server/db/types'
 import { serializeProduct } from '~/server/db/types'
-import { collections } from '~/server/db/collections'
 
 type ProductFilters = {
   category?: string
@@ -18,7 +17,13 @@ interface CatalogState {
   lastSynced: number
 }
 
+/**
+ * Build the in-memory product index from MongoDB.
+ * Uses dynamic import to avoid module-load-time crashes if MongoDB
+ * isn't connected yet when the actor module is first evaluated.
+ */
 async function buildIndexFromDB(state: CatalogState): Promise<void> {
+  const { collections } = await import('~/server/db/collections')
   const { products: col } = collections()
   const allProducts = await col.find({ status: { $in: ['draft', 'active', 'archived'] } })
     .sort({ createdAt: -1 })
@@ -104,6 +109,7 @@ export const catalogActor = actor({
     },
 
     createProduct: async (c, data: CreateProductInput): Promise<SerializedProduct> => {
+      const { collections } = await import('~/server/db/collections')
       const { products: col } = collections()
 
       if (c.state.bySlug[data.slug]) {
@@ -136,6 +142,7 @@ export const catalogActor = actor({
     },
 
     updateProduct: async (c, id: string, data: UpdateProductInput): Promise<SerializedProduct> => {
+      const { collections } = await import('~/server/db/collections')
       const { products: col } = collections()
       const { ObjectId } = await import('mongodb')
 
@@ -163,6 +170,7 @@ export const catalogActor = actor({
     },
 
     deleteProduct: async (c, id: string): Promise<void> => {
+      const { collections } = await import('~/server/db/collections')
       const { products: col } = collections()
       const { ObjectId } = await import('mongodb')
 
