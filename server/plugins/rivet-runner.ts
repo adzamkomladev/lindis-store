@@ -1,5 +1,7 @@
 import { registry } from '~/server/rivet/registry'
 import { connectDB } from '~/server/db/mongodb'
+import tls from 'node:tls'
+import net from 'node:net'
 
 /**
  * Parse RIVET_ENDPOINT into API URL, namespace, and token.
@@ -18,6 +20,7 @@ function parseRivetEndpoint() {
       apiUrl: `${url.protocol}//${url.host}`,
       namespace: url.username || 'default',
       token: url.password || '',
+      host: url.host,
     }
   } catch {
     console.error('[Rivet] Failed to parse RIVET_ENDPOINT:', endpoint)
@@ -219,87 +222,127 @@ async function verifyRunnerConnected(): Promise<void> {
 }
 
 /**
- * Probe WebSocket reachability to the engine's /runners/connect endpoint.
+ * Probe TCP + TLS connectivity to the engine host.
  *
- * The envoy opens a WSS connection to {endpoint}/runners/connect. If anything
- * blocks this connection (firewall, DNS, TLS, auth, wrong path), the runner
- * never registers and every actor call returns `no_runners_available`. We
- * probe the same path with a short-timeout WS handshake so failures are
- * visible at startup instead of silently breaking actor routing later.
+ * This is a simple TCP socket connect to host:443 — no HTTP, no WebSocket,
+ * no dependencies. If the TCP handshake completes, the VPS can reach the
+ * engine at the network level. If it fails (EHOSTUNREACH, ETIMEDOUT, etc.),
+ * the VPS has a firewall, DNS, or routing issue preventing ANY connection
+ * to the engine — which would explain "no runners available" even though
+ * the pool is correctly configured.
  *
- * Returns true if the WS handshake completes (or times out cleanly),
- * false on hard failure (DNS, TCP refused, TLS error, 4xx, etc).
+ * Returns true if TCP connect succeeds, false on any error.
  */
-async function probeWebSocketReachability(): Promise<boolean> {
-  const parsed = parseRivetEndpoint()
-  if (!parsed) return false
+function probeTcpReachability(host: string, port: number = 443): Promise<{ ok: boolean; reason: string }> {
+  return new Promise((resolve) => {
+    const start = Date.now()
+    const socket = new net.Socket()
+    socket.setTimeout(5000)
+    socket.on('connect', () => {
+      const ms = Date.now() - start
+      socket.destroy()
+      resolve({ ok: true, reason: `TCP connected in ${ms}ms` })
+    })
+    socket.on('timeout', () => {
+      socket.destroy()
+      resolve({ ok: false, reason: `TCP timeout after 5s (firewall dropping packets?)` })
+    })
+    socket.on('error', (err: NodeJS.ErrnoException) => {
+      socket.destroy()
+      resolve({ ok: false, reason: `TCP error: ${err.code || err.message}` })
+    })
+    socket.connect(port, host)
+  })
+}
 
-  const { apiUrl, namespace, token } = parsed
-  const wsBase = apiUrl.replace(/^http/, 'ws')
-  const probeUrl = `${wsBase}/runners/connect?protocol_version=1&namespace=${encodeURIComponent(namespace)}&runner_key=__probe__`
-  const protocols = token ? ['rivet', `rivet_token.${token}`] : ['rivet']
-
-  console.log(`[Rivet]   Probing: ${wsBase}/runners/connect?protocol_version=1&namespace=${namespace}&runner_key=__probe__`)
-
-  return new Promise<boolean>((resolve) => {
+/**
+ * Probe WebSocket upgrade reachability to the engine's /runners/connect endpoint.
+ *
+ * Uses Node.js built-in tls.connect + raw HTTP upgrade headers. No WebSocket
+ * library or globalThis.WebSocket required — works in any Node.js runtime
+ * (Node 18+, Bun, etc.).
+ *
+ * The engine's /runners/connect endpoint expects a standard WebSocket upgrade
+ * with the `rivet_token.<token>` subprotocol. We send the HTTP upgrade request,
+ * read the first response line, and immediately close the socket.
+ *
+ * Returns true if the engine responds with 101 Switching Protocols,
+ * false on any error (4xx, connection refused, TLS error, timeout).
+ */
+function probeWebSocketReachability(
+  host: string,
+  port: number,
+  namespace: string,
+  token: string
+): Promise<{ ok: boolean; reason: string }> {
+  return new Promise((resolve) => {
     let settled = false
     const finish = (ok: boolean, reason: string) => {
       if (settled) return
       settled = true
-      console.log(`[Rivet]   Probe result: ${ok ? 'OK' : 'FAILED'} — ${reason}`)
-      resolve(ok)
+      try { socket.destroy() } catch {}
+      clearTimeout(timeout)
+      resolve({ ok, reason })
     }
 
-    let ws: any
+    const timeout = setTimeout(() => finish(false, 'timeout after 8s'), 8000)
+
+    let socket: net.Socket
     try {
-      // Try global WebSocket first (Bun, browsers), then fall back to ws package (Node).
-      // The SDK imports its own WS module — we use whatever is available to us
-      // at probe time. We don't need a real connection, just a successful
-      // handshake (open event) or a clean close.
-      const WS = (globalThis as any).WebSocket
-      if (!WS) {
-        finish(false, 'no WebSocket constructor available globally; skipping probe (Bun missing?)')
-        return
-      }
-      ws = new WS(probeUrl, protocols)
-    } catch (e) {
-      finish(false, `constructor threw: ${(e as Error).message}`)
+      socket = tls.connect({ host, port, servername: host, rejectUnauthorized: false })
+    } catch (e: any) {
+      finish(false, `tls.connect threw: ${e.message}`)
       return
     }
 
-    const timeout = setTimeout(() => {
-      try { ws?.close() } catch {}
-      // Timeout on a probe is a *good* sign: it means TCP+TLS+WS-handshake
-      // reached the engine. The engine then keeps the WS open waiting for
-      // ToServerInit, which we never send. We treat that as "reachable".
-      finish(true, 'no open event in 5s — assumed reachable (engine holding WS open)')
-    }, 5000)
+    const protocols = token ? `rivet, rivet_token.${token}` : 'rivet'
+    const key = Buffer.from(Math.random().toString()).toString('base64')
+    const path = `/runners/connect?protocol_version=1&namespace=${encodeURIComponent(namespace)}&runner_key=__health_probe__`
+    const request = [
+      `GET ${path} HTTP/1.1`,
+      `Host: ${host}`,
+      'Connection: Upgrade',
+      'Upgrade: websocket',
+      `Sec-WebSocket-Version: 13`,
+      `Sec-WebSocket-Key: ${key}`,
+      `Sec-WebSocket-Protocol: ${protocols}`,
+      '',
+      '',
+    ].join('\r\n')
 
-    try {
-      ws.addEventListener('open', () => {
-        clearTimeout(timeout)
-        try { ws.close(1000, 'probe') } catch {}
-        finish(true, 'WS handshake succeeded')
-      })
-      ws.addEventListener('error', (ev: any) => {
-        clearTimeout(timeout)
-        finish(false, `WS error event: ${ev?.message || ev?.toString?.() || 'unknown'}`)
-      })
-      ws.addEventListener('close', (ev: any) => {
-        clearTimeout(timeout)
-        // 4xx close codes mean the engine rejected the WS (auth, bad path).
-        // 1xxx transport codes mean the network path is broken.
-        if (ev?.code >= 4000 && ev?.code < 5000) {
-          finish(false, `WS closed with code ${ev.code} (${ev.reason || 'no reason'})`)
+    let data = ''
+    socket.on('connect', () => socket.write(request))
+    socket.on('data', (chunk: Buffer) => {
+      data += chunk.toString()
+      // Read just the first line: "HTTP/1.1 101 Switching Protocols"
+      const firstLine = data.split('\r\n')[0] || ''
+      if (firstLine.startsWith('HTTP/1.1 101')) {
+        finish(true, 'WS upgrade accepted (101)')
+      } else if (firstLine.includes('HTTP/') && !firstLine.includes('101')) {
+        const status = firstLine.split(' ').slice(0, 3).join(' ')
+        finish(false, `WS upgrade rejected: ${status}`)
+      }
+      // If we haven't seen a complete response line yet, keep waiting
+    })
+    socket.on('error', (err: NodeJS.ErrnoException) => {
+      finish(false, `TLS/WS error: ${err.code || err.message}`)
+    })
+    socket.on('end', () => {
+      // If we got here without settling, the engine accepted but closed early
+      if (!settled) {
+        const firstLine = data.split('\r\n')[0] || ''
+        if (firstLine.startsWith('HTTP/1.1 101')) {
+          finish(true, 'WS upgrade accepted (engine closed after handshake)')
         } else {
-          // Clean close (1000, 1001, 1006) without open = likely DNS/TCP failure
-          finish(false, `WS closed code=${ev?.code} reason=${ev?.reason || 'unknown'} (no open event)`)
+          finish(false, `connection closed before response: ${firstLine || 'no data'}`)
         }
-      })
-    } catch (e) {
-      clearTimeout(timeout)
-      finish(false, `addEventListener threw: ${(e as Error).message}`)
-    }
+      }
+    })
+    socket.on('close', () => {
+      if (!settled) {
+        finish(false, 'connection closed without response')
+      }
+    })
   })
 }
 
@@ -356,22 +399,64 @@ export default defineNitroPlugin(async () => {
     console.warn('[Rivet] Step 2/4: Pool config check failed — will retry after envoy starts')
   }
 
-  // Step 2.5: Verify WebSocket reachability to engine before starting envoy
-  // The runner envoy opens a WS to {endpoint}/runners/connect — if that fails
-  // (firewall, DNS, TLS, auth), startEnvoy() returns successfully but the
-  // runner never registers and every actor call gets `no_runners_available`.
-  console.log('[Rivet] Step 2.5/4: Probing WebSocket reachability to engine...')
-  const wsReachable = await probeWebSocketReachability()
-  if (!wsReachable) {
-    console.error('[Rivet] Step 2.5/4: ✗ WebSocket probe FAILED — runner registration will not work.')
-    console.error('[Rivet]   This usually means:')
-    console.error('[Rivet]     - Firewall blocking outbound WSS from VPS to rivet.yebi.africa:443')
-    console.error('[Rivet]     - DNS cannot resolve rivet.yebi.africa')
-    console.error('[Rivet]     - TLS handshake failing (cert mismatch, SNI issue)')
-    console.error('[Rivet]     - RIVET_ENDPOINT token is invalid (401 on WS upgrade)')
-    console.error('[Rivet]   Continuing anyway — startEnvoy() will retry in background.')
+  // Step 2.5: Verify network + WebSocket reachability before starting envoy.
+  // The runner envoy opens a WS to wss://host/runners/connect — if that fails
+  // (firewall, DNS, TLS, auth, wrong path), startEnvoy() returns successfully
+  // but the runner never registers and every actor call gets no_runners_available.
+  //
+  // We do TWO probes:
+  //   a) TCP connect to host:443 — validates basic network path
+  //   b) WebSocket upgrade request — validates the engine accepts runner WS connections
+  console.log('[Rivet] Step 2.5/4: Probing engine connectivity...')
+
+  const parsedEp = parseRivetEndpoint()
+  if (parsedEp) {
+    // a) TCP connectivity
+    console.log(`[Rivet]   TCP probe: connecting to ${parsedEp.host}:443...`)
+    const tcpResult = await probeTcpReachability(parsedEp.host, 443)
+    console.log(`[Rivet]   TCP result: ${tcpResult.ok ? 'OK' : 'FAILED'} — ${tcpResult.reason}`)
+
+    if (!tcpResult.ok) {
+      console.error('[Rivet] ─── NETWORK DIAGNOSIS ───')
+      console.error(`[Rivet]   The VPS cannot establish a TCP connection to ${parsedEp.host}:443.`)
+      console.error('[Rivet]   This means the engine is UNREACHABLE from this VPS.')
+      console.error('[Rivet]   Possible causes:')
+      console.error('[Rivet]     - VPS firewall blocking outbound port 443')
+      console.error(`[Rivet]     - DNS cannot resolve ${parsedEp.host}`)
+      console.error('[Rivet]     - Network routing issue on the VPS')
+      console.error('[Rivet]     - Docker network not allowing outbound connections')
+      console.error('[Rivet]   Fix: SSH into VPS and run:')
+      console.error(`[Rivet]     curl -v https://${parsedEp.host}/`)
+      console.error(`[Rivet]     nc -zv ${parsedEp.host} 443`)
+      console.error('[Rivet] ──────────────────────────')
+    } else {
+      // b) WebSocket upgrade probe (only if TCP works)
+      console.log('[Rivet]   WS probe: sending upgrade request to /runners/connect...')
+      const wsResult = await probeWebSocketReachability(
+        parsedEp.host,
+        443,
+        parsedEp.namespace,
+        parsedEp.token
+      )
+      console.log(`[Rivet]   WS result: ${wsResult.ok ? 'OK' : 'FAILED'} — ${wsResult.reason}`)
+
+      if (!wsResult.ok) {
+        console.error('[Rivet] ─── WEBSOCKET DIAGNOSIS ───')
+        console.error('[Rivet]   TCP is OK but the WebSocket upgrade was REJECTED.')
+        console.error(`[Rivet]   The engine responded: ${wsResult.reason}`)
+        console.error('[Rivet]   Possible causes:')
+        console.error('[Rivet]     - Wrong auth token (check RIVET_ENDPOINT password)')
+        console.error('[Rivet]     - Namespace mismatch')
+        console.error('[Rivet]     - Engine version incompatibility')
+        console.error('[Rivet]     - Engine /runners/connect endpoint not available')
+        console.error('[Rivet]   Fix: verify the Engine dashboard Connect tab shows')
+        console.error('[Rivet]     the correct namespace and token. The WS subprotocol')
+        console.error('[Rivet]     should be "rivet_token.<token>" (from RIVET_ENDPOINT URL password).')
+        console.error('[Rivet] ──────────────────────────────')
+      }
+    }
   } else {
-    console.log('[Rivet] Step 2.5/4: Engine WebSocket reachable ✓')
+    console.error('[Rivet] Step 2.5/4: Cannot probe — RIVET_ENDPOINT not parseable')
   }
 
   // Step 3: Start the envoy

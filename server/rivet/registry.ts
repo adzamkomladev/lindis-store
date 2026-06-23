@@ -17,12 +17,22 @@ import { settingsActor } from './actors/settings-actor'
  * Must run before setup() evaluates the config. Bump RIVET_RUNNER_VERSION
  * on each deploy so the engine drains stale envoys.
  *
+ * The value must be "envoy" or "serverless" for the SDK to accept it.
+ * If RIVET_RUNNER_VERSION is set to something like "2" or "2.3.2", we
+ * treat it as a deploy counter and pass through "envoy" (the Runtime
+ * mode name) to RIVET_ENVOY_VERSION instead. The versioning is handled
+ * by the engine via the runner_key + deploy drain logic, not by the
+ * env var value itself.
+ *
  * @see https://rivet.dev/docs/actors/versions
  */
 function ensureRivetEnvoyVersion(): void {
   if (process.env.RIVET_ENVOY_VERSION) return
   if (process.env.RIVET_RUNNER_VERSION) {
-    process.env.RIVET_ENVOY_VERSION = process.env.RIVET_RUNNER_VERSION
+    // The SDK only accepts "envoy" or "serverless" for RIVET_ENVOY_VERSION.
+    // RIVET_RUNNER_VERSION is our deploy counter (e.g. "2") — don't pass it
+    // through; use "envoy" which tells the SDK we're in runner mode.
+    process.env.RIVET_ENVOY_VERSION = 'envoy'
   }
 }
 
