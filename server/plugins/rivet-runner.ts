@@ -49,10 +49,13 @@ async function ensureNormalRunnerPool(): Promise<boolean> {
 
   try {
     // Check current pool configuration
+    console.log('[Rivet]   GET runner-configs...')
+    const getStart = Date.now()
     const configsRes = await $fetch<any>(
       `${apiUrl}/runner-configs?namespace=${namespace}&runner_name=default`,
-      { headers: authHeader }
+      { headers: authHeader, timeout: 10_000 }
     )
+    console.log(`[Rivet]   GET completed in ${Date.now() - getStart}ms`)
 
     const configs = configsRes?.runner_configs || {}
     const defaultConfig = configs.default
@@ -102,6 +105,8 @@ async function ensureNormalRunnerPool(): Promise<boolean> {
     console.log(`[Rivet]   PUT ${apiUrl}/runner-configs/default?namespace=${namespace}`)
 
     try {
+      console.log('[Rivet]   PUT: sending request...')
+      const putStart = Date.now()
       const putRes = await $fetch(
         `${apiUrl}/runner-configs/default?namespace=${namespace}`,
         {
@@ -114,8 +119,10 @@ async function ensureNormalRunnerPool(): Promise<boolean> {
               },
             },
           },
+          timeout: 10_000, // fail fast — engine should respond in <1s
         }
       )
+      console.log(`[Rivet]   PUT: completed in ${Date.now() - putStart}ms`)
       console.log('[Rivet]   PUT response:', JSON.stringify(putRes))
       console.log('[Rivet] Runner pool switched to normal kind ✓')
     } catch (putError: any) {
@@ -124,7 +131,10 @@ async function ensureNormalRunnerPool(): Promise<boolean> {
       console.error('[Rivet]   message:', putError?.message || putError)
       console.error('[Rivet]   data:', JSON.stringify(putError?.data || putError?.response?._data || null))
       console.error('[Rivet]   headers:', JSON.stringify(putError?.response?.headers || null))
-      throw putError
+      // Don't re-throw — log and continue. Returning false tells the main
+      // plugin to keep going and start the envoy anyway; the engine will
+      // create the pool config when the first runner connects, regardless
+      // of whether our PUT succeeded.
     }
 
     // Refresh metadata so the engine picks up the new config
@@ -318,7 +328,11 @@ async function probeWebSocketReachability(): Promise<boolean> {
  * @see https://rivet.dev/docs/actors/debugging
  */
 export default defineNitroPlugin(async () => {
-  console.log('[Rivet] ═══ Runner plugin initializing ═══')
+  const pluginStart = Date.now()
+  const t = () => `[+${Date.now() - pluginStart}ms]`
+  console.log(`[Rivet] ${t()} ═══ Runner plugin initializing ═══`)
+  console.log(`[Rivet] ${t()} RIVET_ENDPOINT=${process.env.RIVET_ENDPOINT ? '***set***' : 'MISSING'}`)
+  console.log(`[Rivet] ${t()} RIVET_RUNNER_VERSION=${process.env.RIVET_RUNNER_VERSION || 'unset'}`)
 
   // Step 1: Wait for MongoDB to be ready
   try {
