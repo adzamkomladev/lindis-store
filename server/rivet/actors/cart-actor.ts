@@ -116,8 +116,26 @@ export const cartActor = actor({
       }
 
       const subtotal = calcSubtotal(c.state.items)
+      const cartQuantity = c.state.items.reduce((sum, i) => sum + i.quantity, 0)
+
+      // Validate minimum order amount
+      if (discount.minOrderAmount && subtotal < discount.minOrderAmount) {
+        throw new UserError(`Minimum order amount of GHS ${(discount.minOrderAmount / 100).toFixed(2)} required`, {
+          code: 'min_order_amount',
+          metadata: { required: discount.minOrderAmount, current: subtotal },
+        })
+      }
+
+      // Validate minimum quantity
+      if (discount.minQuantity && cartQuantity < discount.minQuantity) {
+        throw new UserError(`Minimum quantity of ${discount.minQuantity} items required`, {
+          code: 'min_quantity',
+          metadata: { required: discount.minQuantity, current: cartQuantity },
+        })
+      }
+
       let discountAmount = 0
-      if (discount.type === 'percentage') discountAmount = Math.round(subtotal * discount.value / 100)
+      if (discount.type === 'percentage') discountAmount = Math.floor(subtotal * discount.value / 100)
       if (discount.type === 'fixed') discountAmount = Math.min(discount.value, subtotal)
 
       c.state.discountCode = {
@@ -127,11 +145,17 @@ export const cartActor = actor({
         discountAmount,
       }
 
+      const total = calcTotal(c.state.items, c.state.discountCode)
+      c.broadcast('cartUpdated', { items: c.state.items, subtotal, total })
+
       return c.state.discountCode
     },
 
     removeDiscount: (c) => {
       c.state.discountCode = null
+      const subtotal = calcSubtotal(c.state.items)
+      const total = calcTotal(c.state.items, null)
+      c.broadcast('cartUpdated', { items: c.state.items, subtotal, total })
     },
 
     getCart: (c) => ({

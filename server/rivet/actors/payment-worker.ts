@@ -27,34 +27,44 @@ export const paymentWorker = actor({
       if (message.name === 'payments') {
         const { reference, orderNumber, amount, metadata } = message.body
 
-        // Verify with Paystack
         const paystackSecretKey = process.env.PAYSTACK_SECRET_KEY
+        if (!paystackSecretKey) {
+          console.error('[PaymentWorker] PAYSTACK_SECRET_KEY not set — cannot verify payment')
+          c.state.failed += 1
+          continue
+        }
+
+        // Verify with Paystack
         const response = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
           headers: { Authorization: `Bearer ${paystackSecretKey}` },
         })
-        const data = await response.json() as any
+        const data = (await response.json()) as any
 
         if (data.status && data.data?.status === 'success') {
-          // Notify the order actor to continue its workflow
-          const client = c.client<typeof import('../registry').registry>()
-          await client.orderActor
-            .getOrCreate([orderNumber])
-            .commands.push({
+          try {
+            // Notify the order actor to continue its workflow
+            const client = c.client<typeof import('../registry').registry>()
+            await client.orderActor.getOrCreate([orderNumber]).commands.push({
               type: 'payment_confirmed',
               reference,
               amount: data.data.amount,
               metadata: data.data,
             })
 
-          c.state.processed += 1
+            c.state.processed += 1
+          } catch (err) {
+            console.error(`[PaymentWorker] Failed to notify order actor ${orderNumber}:`, (err as Error).message)
+            c.state.failed += 1
+          }
         } else {
           // Update order payment status to failed in MongoDB
-          const { collections } = await import('~/server/db/collections')
-          const { orders } = collections()
-          await orders.updateOne(
-            { orderNumber },
-            { $set: { 'payment.status': 'failed' } }
-          )
+          try {
+            const { collections } = await import('~/server/db/collections')
+            const { orders } = collections()
+            await orders.updateOne({ orderNumber }, { $set: { 'payment.status': 'failed' } })
+          } catch (err) {
+            console.error(`[PaymentWorker] Failed to update order ${orderNumber}:`, (err as Error).message)
+          }
           c.state.failed += 1
         }
       }
@@ -62,15 +72,24 @@ export const paymentWorker = actor({
       if (message.name === 'verifyPayments') {
         const { reference, orderNumber } = message.body
         const paystackSecretKey = process.env.PAYSTACK_SECRET_KEY
+        if (!paystackSecretKey) {
+          console.error('[PaymentWorker] PAYSTACK_SECRET_KEY not set — cannot verify payment')
+          continue
+        }
 
         const response = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
           headers: { Authorization: `Bearer ${paystackSecretKey}` },
         })
-        const data = await response.json() as any
+        const data = (await response.json()) as any
 
         if (data.status && data.data?.status === 'success') {
           // Re-enqueue as confirmed payment
-          await c.queue.payments.push({ reference, orderNumber, amount: data.data.amount, metadata: data.data })
+          await c.queue.payments.push({
+            reference,
+            orderNumber,
+            amount: data.data.amount,
+            metadata: data.data,
+          })
         }
       }
     }
