@@ -91,14 +91,14 @@ if (import.meta.client && cart.value.items.length === 0) {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#f8f9fa]">
+  <div class="min-h-screen bg-surface">
 
     <!-- Editorial Page Header -->
-    <section class="pt-32 pb-10 px-8 max-w-screen-2xl mx-auto border-b border-[#c5c6d1]/20">
+    <section class="pt-32 pb-10 px-8 max-w-screen-2xl mx-auto border-b border-outline-variant">
       <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
         <div>
-          <span class="text-[#475d92] font-label font-bold uppercase tracking-[0.2em] text-xs mb-2 block">Secure Checkout</span>
-          <h1 class="font-headline font-black tracking-tighter text-[#000622] leading-none" style="font-size: clamp(2.25rem, 5vw, 3.5rem)">
+          <span class="text-primary font-label font-bold uppercase tracking-[0.2em] text-xs mb-2 block">Secure Checkout</span>
+          <h1 class="font-headline font-black tracking-tighter text-on-surface leading-none" style="font-size: clamp(2.25rem, 5vw, 3.5rem)">
             Checkout
           </h1>
         </div>
@@ -107,22 +107,22 @@ if (import.meta.client && cart.value.items.length === 0) {
         <div class="flex items-center gap-3">
           <!-- Step 1: Cart (done) -->
           <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-[#000622] text-white flex items-center justify-center shrink-0">
+            <div class="w-8 h-8 bg-primary text-white flex items-center justify-center shrink-0">
               <Check class="w-4 h-4" />
             </div>
-            <span class="text-xs font-bold uppercase tracking-widest font-label hidden sm:inline text-[#000622]">Cart</span>
+            <span class="text-xs font-bold uppercase tracking-widest font-label hidden sm:inline text-on-surface">Cart</span>
           </div>
-          <div class="w-8 h-px bg-[#000622]"></div>
+          <div class="w-8 h-px bg-primary"></div>
           <!-- Step 2: Shipping (active) -->
           <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-[#000622] text-white flex items-center justify-center text-xs font-bold shrink-0 font-label">2</div>
-            <span class="text-xs font-bold uppercase tracking-widest font-label hidden sm:inline text-[#000622]">Shipping</span>
+            <div class="w-8 h-8 bg-primary text-white flex items-center justify-center text-xs font-bold shrink-0 font-label">2</div>
+            <span class="text-xs font-bold uppercase tracking-widest font-label hidden sm:inline text-on-surface">Shipping</span>
           </div>
           <div class="w-8 h-px bg-[#c5c6d1]"></div>
           <!-- Step 3: Payment (pending) -->
           <div class="flex items-center gap-2">
-            <div class="w-8 h-8 border border-[#c5c6d1] text-[#757681] flex items-center justify-center text-xs font-bold shrink-0 font-label">3</div>
-            <span class="text-xs font-bold uppercase tracking-widest font-label hidden sm:inline text-[#757681]">Payment</span>
+            <div class="w-8 h-8 border border-outline-variant text-on-surface-variant flex items-center justify-center text-xs font-bold shrink-0 font-label">3</div>
+            <span class="text-xs font-bold uppercase tracking-widest font-label hidden sm:inline text-on-surface-variant">Payment</span>
           </div>
         </div>
       </div>
@@ -134,18 +134,18 @@ if (import.meta.client && cart.value.items.length === 0) {
 
         <!-- Form: 7 columns -->
         <div class="lg:col-span-7 order-2 lg:order-1">
-          <div class="bg-white border border-[#c5c6d1]/15 p-8 md:p-10">
+          <div class="bg-surface-container-lowest border border-outline-variant p-8 md:p-10">
             <CheckoutForm
               :is-submitting="isSubmitting"
               @submit="handleCheckout"
             >
               <template #default="{ isSubmitting: submitting }">
-                <div class="pt-8 space-y-4 border-t border-[#c5c6d1]/20">
+                <div class="pt-8 space-y-4 border-t border-outline-variant">
                   <button
                     type="submit"
                     :disabled="submitting"
                     class="w-full py-5 font-label font-bold uppercase tracking-widest text-sm text-white flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
-                    :class="submitting ? 'bg-[#475d92]' : 'monolith-gradient'"
+                    :class="submitting ? 'bg-primary' : 'monolith-gradient'"
                   >
                     <Loader2 v-if="submitting" class="w-4 h-4 animate-spin" />
                     <Lock v-else class="w-4 h-4" />
@@ -153,7 +153,7 @@ if (import.meta.client && cart.value.items.length === 0) {
                     <span v-if="!submitting" class="material-symbols-outlined text-lg">arrow_forward</span>
                   </button>
 
-                  <div class="flex items-center justify-center gap-2 text-xs text-[#757681] font-body">
+                  <div class="flex items-center justify-center gap-2 text-xs text-on-surface-variant font-body">
                     <ShieldCheck class="w-4 h-4" />
                     <span>Secure checkout powered by</span>
                     <NuxtImg
@@ -170,25 +170,25 @@ if (import.meta.client && cart.value.items.length === 0) {
 
         <!-- Summary: 5 columns, sticky -->
         <div class="lg:col-span-5 order-1 lg:order-2">
-          <div class="bg-[#f3f4f5] p-8 md:p-10 lg:sticky lg:top-28">
-            <h2 class="font-headline font-bold text-[#000622] mb-8 tracking-tight" style="font-size: 1.25rem">
+          <div class="bg-surface-container-low p-8 md:p-10 lg:sticky lg:top-28">
+            <h2 class="font-headline font-bold text-on-surface mb-8 tracking-tight" style="font-size: 1.25rem">
               Order Summary
             </h2>
 
             <CheckoutItems :items="cart.items" />
 
-            <div class="mt-8 pt-6 border-t border-[#c5c6d1]/20 space-y-4">
+            <div class="mt-8 pt-6 border-t border-outline-variant space-y-4">
               <div class="flex justify-between text-sm font-body">
-                <span class="text-[#454650]">Subtotal</span>
-                <span class="font-bold text-[#000622]">{{ formatPrice(cartTotal) }}</span>
+                <span class="text-on-surface-variant">Subtotal</span>
+                <span class="font-bold text-on-surface">{{ formatPrice(cartTotal) }}</span>
               </div>
               <div class="flex justify-between text-sm font-body">
-                <span class="text-[#454650]">Shipping</span>
-                <span class="font-bold text-emerald-600">
+                <span class="text-on-surface-variant">Shipping</span>
+                <span class="font-bold text-primary">
                   {{ appliedDiscount?.type === 'free_shipping' ? 'FREE (Discount)' : 'FREE' }}
                 </span>
               </div>
-              <div v-if="appliedDiscount" class="flex justify-between text-sm text-emerald-600">
+              <div v-if="appliedDiscount" class="flex justify-between text-sm text-primary">
                 <span class="flex items-center gap-1 font-body">
                   <Tag class="w-3.5 h-3.5" />
                   Discount ({{ appliedDiscount.code }})
@@ -198,29 +198,29 @@ if (import.meta.client && cart.value.items.length === 0) {
             </div>
 
             <!-- Total -->
-            <div class="mt-6 pt-6 border-t border-[#c5c6d1]/30 flex justify-between items-end">
-              <span class="font-headline font-bold text-[#000622] text-lg">Total</span>
+            <div class="mt-6 pt-6 border-t border-outline-variant flex justify-between items-end">
+              <span class="font-headline font-bold text-on-surface text-lg">Total</span>
               <div class="text-right">
-                <span class="block text-[10px] text-[#454650] uppercase font-bold tracking-widest font-label">GHS</span>
-                <span class="font-headline font-black text-[#000622] tracking-tighter" style="font-size: 2rem">
+                <span class="block text-[10px] text-on-surface-variant uppercase font-bold tracking-widest font-label">GHS</span>
+                <span class="font-headline font-black text-on-surface tracking-tighter" style="font-size: 2rem">
                   {{ formatPrice(finalTotal) }}
                 </span>
               </div>
             </div>
 
             <!-- Discount Code -->
-            <div class="mt-8 pt-6 border-t border-[#c5c6d1]/20">
-              <span class="font-label text-xs uppercase text-[#757681] tracking-widest block mb-4">Discount Code</span>
+            <div class="mt-8 pt-6 border-t border-outline-variant">
+              <span class="font-label text-xs uppercase text-on-surface-variant tracking-widest block mb-4">Discount Code</span>
 
-              <div v-if="appliedDiscount" class="flex items-center justify-between p-4 bg-emerald-50 border border-emerald-200">
+              <div v-if="appliedDiscount" class="flex items-center justify-between p-4 bg-primary/5 border border-emerald-200">
                 <div class="flex items-center gap-2">
-                  <Tag class="w-4 h-4 text-emerald-600" />
+                  <Tag class="w-4 h-4 text-primary" />
                   <div>
-                    <p class="text-sm font-bold text-emerald-700 font-label">{{ appliedDiscount.code }}</p>
-                    <p class="text-xs text-emerald-600/80 font-body">{{ appliedDiscount.description || 'Discount applied' }}</p>
+                    <p class="text-sm font-bold text-primary font-label">{{ appliedDiscount.code }}</p>
+                    <p class="text-xs text-primary/80 font-body">{{ appliedDiscount.description || 'Discount applied' }}</p>
                   </div>
                 </div>
-                <button @click="removeDiscount" class="text-emerald-700 hover:text-emerald-900 transition-colors">
+                <button @click="removeDiscount" class="text-primary hover:text-emerald-900 transition-colors">
                   <X class="w-4 h-4" />
                 </button>
               </div>
@@ -229,14 +229,14 @@ if (import.meta.client && cart.value.items.length === 0) {
                 <input
                   v-model="discountCodeInput"
                   placeholder="ENTER CODE"
-                  class="flex-1 bg-transparent border border-[#c5c6d1] border-r-0 px-4 py-3 text-sm uppercase font-label font-bold tracking-widest focus:outline-none focus:border-[#000622] transition-colors placeholder:text-[#c5c6d1] placeholder:font-bold"
+                  class="flex-1 bg-transparent border border-outline-variant border-r-0 px-4 py-3 text-sm uppercase font-label font-bold tracking-widest focus:outline-none focus:border-primary transition-colors placeholder:text-on-surface-variant placeholder:font-bold"
                   @keyup.enter="applyDiscount"
                   :disabled="isApplyingDiscount"
                 />
                 <button
                   @click="applyDiscount"
                   :disabled="isApplyingDiscount || !discountCodeInput.trim()"
-                  class="px-5 py-3 bg-[#000622] text-white text-xs font-bold uppercase tracking-widest font-label hover:opacity-90 transition-opacity disabled:opacity-40"
+                  class="px-5 py-3 bg-primary text-white text-xs font-bold uppercase tracking-widest font-label hover:opacity-90 transition-opacity disabled:opacity-40"
                 >
                   <Loader2 v-if="isApplyingDiscount" class="w-4 h-4 animate-spin" />
                   <span v-else>Apply</span>
@@ -246,12 +246,12 @@ if (import.meta.client && cart.value.items.length === 0) {
             </div>
 
             <!-- Payment Methods -->
-            <div class="mt-6 pt-6 border-t border-[#c5c6d1]/20">
-              <span class="font-label text-xs uppercase text-[#757681] tracking-widest block mb-3">Accepted Payments</span>
+            <div class="mt-6 pt-6 border-t border-outline-variant">
+              <span class="font-label text-xs uppercase text-on-surface-variant tracking-widest block mb-3">Accepted Payments</span>
               <div class="flex items-center gap-3">
-                <div class="px-3 py-1.5 bg-[#edeeef] text-xs font-bold text-[#454650] font-label uppercase tracking-wide">Visa</div>
-                <div class="px-3 py-1.5 bg-[#edeeef] text-xs font-bold text-[#454650] font-label uppercase tracking-wide">Mastercard</div>
-                <div class="px-3 py-1.5 bg-[#edeeef] text-xs font-bold text-[#454650] font-label uppercase tracking-wide">MoMo</div>
+                <div class="px-3 py-1.5 bg-surface-container-low text-xs font-bold text-on-surface-variant font-label uppercase tracking-wide">Visa</div>
+                <div class="px-3 py-1.5 bg-surface-container-low text-xs font-bold text-on-surface-variant font-label uppercase tracking-wide">Mastercard</div>
+                <div class="px-3 py-1.5 bg-surface-container-low text-xs font-bold text-on-surface-variant font-label uppercase tracking-wide">MoMo</div>
               </div>
             </div>
           </div>

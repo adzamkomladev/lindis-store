@@ -75,8 +75,8 @@ const statusConfig: Record<string, { icon: any, class: string, bgClass: string, 
   },
   delivered: { 
     icon: CheckCircle2, 
-    class: 'text-emerald-700', 
-    bgClass: 'bg-emerald-50 border-emerald-200', 
+    class: 'text-primary', 
+    bgClass: 'bg-primary/5 border-emerald-200', 
     label: 'Delivered',
     description: 'Your order has been delivered'
   },
@@ -91,8 +91,8 @@ const statusConfig: Record<string, { icon: any, class: string, bgClass: string, 
 
 const paymentStatusConfig: Record<string, { class: string, label: string }> = {
   unpaid: { class: 'bg-amber-50 text-amber-700 border-amber-200', label: 'Unpaid' },
-  paid: { class: 'bg-emerald-50 text-emerald-700 border-emerald-200', label: 'Paid' },
-  refunded: { class: 'bg-stone-100 text-stone-700 border-stone-200', label: 'Refunded' }
+  paid: { class: 'bg-primary/5 text-primary border-emerald-200', label: 'Paid' },
+  refunded: { class: 'bg-surface-container-low text-stone-700 border-outline-variant', label: 'Refunded' }
 }
 
 const getStatusConfig = (status: string) => statusConfig[status] || statusConfig.pending
@@ -167,7 +167,7 @@ const timelineSteps = computed(() => {
       <!-- Loading State -->
       <div v-if="pending" class="space-y-4 md:space-y-6">
         <Skeleton class="h-8 md:h-10 w-48 md:w-64" />
-        <Card class="border-0 shadow-sm">
+        <Card class="border-primary shadow-sm">
           <CardContent class="p-4 md:p-6 space-y-4">
             <Skeleton class="h-16 md:h-20 w-full" />
             <Skeleton class="h-16 md:h-20 w-full" />
@@ -179,7 +179,7 @@ const timelineSteps = computed(() => {
         <!-- Header -->
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <div>
-            <h1 class="text-xl md:text-2xl lg:text-3xl font-bold text-foreground">
+            <h1 class="text-xl md:text-on-surfacexl lg:text-3xl font-bold text-foreground">
               Order {{ order.orderNumber }}
             </h1>
             <p class="text-xs md:text-sm text-muted-foreground mt-0.5 md:mt-1">
@@ -207,20 +207,20 @@ const timelineSteps = computed(() => {
         </div>
 
         <!-- Order Timeline (Desktop) -->
-        <Card v-if="order.status !== 'cancelled'" class="border-0 shadow-sm hidden md:block">
+        <Card v-if="order.status !== 'cancelled'" class="border-primary shadow-sm hidden md:block">
           <CardContent class="p-4 md:p-6">
             <div class="flex items-center justify-between">
               <template v-for="(step, index) in timelineSteps" :key="step.key">
                 <div class="flex flex-col items-center">
                   <div 
                     class="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-colors"
-                    :class="step.completed ? 'bg-emerald-100 text-emerald-600' : 'bg-stone-100 text-stone-400'"
+                    :class="step.completed ? 'bg-emerald-100 text-primary' : 'bg-surface-container-low text-stone-400'"
                   >
                     <component :is="step.icon" class="w-4 h-4 md:w-5 md:h-5" />
                   </div>
                   <span 
                     class="text-xs md:text-sm mt-1.5 md:mt-2 font-medium"
-                    :class="step.completed ? 'text-stone-900' : 'text-stone-400'"
+                    :class="step.completed ? 'text-on-surface' : 'text-stone-400'"
                   >
                     {{ step.label }}
                   </span>
@@ -236,20 +236,20 @@ const timelineSteps = computed(() => {
         </Card>
 
         <!-- Mobile Timeline -->
-        <Card v-if="order.status !== 'cancelled'" class="border-0 shadow-sm md:hidden">
+        <Card v-if="order.status !== 'cancelled'" class="border-primary shadow-sm md:hidden">
           <CardContent class="p-4">
             <div class="flex items-center gap-2 overflow-x-auto pb-2">
               <template v-for="(step, index) in timelineSteps" :key="step.key">
                 <div class="flex items-center gap-2 shrink-0">
                   <div 
                     class="w-8 h-8 rounded-full flex items-center justify-center"
-                    :class="step.completed ? 'bg-emerald-100 text-emerald-600' : 'bg-stone-100 text-stone-400'"
+                    :class="step.completed ? 'bg-emerald-100 text-primary' : 'bg-surface-container-low text-stone-400'"
                   >
                     <component :is="step.icon" class="w-3.5 h-3.5" />
                   </div>
                   <span 
                     class="text-xs font-medium whitespace-nowrap"
-                    :class="step.completed ? 'text-stone-900' : 'text-stone-400'"
+                    :class="step.completed ? 'text-on-surface' : 'text-stone-400'"
                   >
                     {{ step.label }}
                   </span>
@@ -266,10 +266,10 @@ const timelineSteps = computed(() => {
 
         <div class="grid gap-4 md:gap-6 lg:grid-cols-3">
           <!-- Order Items -->
-          <Card class="lg:col-span-2 border-0 shadow-sm">
+          <Card class="lg:col-span-2 border-primary shadow-sm">
             <CardHeader class="p-4 md:p-6 pb-3 md:pb-4">
               <div class="flex items-center gap-2 md:gap-3">
-                <div class="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-stone-100">
+                <div class="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-surface-container-low">
                   <Package class="w-4 h-4 md:w-5 md:h-5 text-stone-600" />
                 </div>
                 <CardTitle class="text-base md:text-lg">Order Items</CardTitle>
@@ -281,10 +281,10 @@ const timelineSteps = computed(() => {
                   v-for="item in order.items" 
                   :key="item.id"
                   :to="`/products/${item.productSlug}`"
-                  class="flex flex-col gap-3 p-3 md:p-4 rounded-xl md:rounded-2xl bg-stone-50/50 hover:bg-stone-100/50 transition-colors"
+                  class="flex flex-col gap-3 p-3 md:p-4 rounded-xl md:rounded-2xl bg-surface-container-low/50 hover:bg-surface-container-low/50 transition-colors"
                 >
                   <div class="flex items-start gap-3 md:gap-4 w-full">
-                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-lg md:rounded-xl bg-white border border-stone-200 overflow-hidden flex-shrink-0">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-lg md:rounded-xl bg-surface-container-lowest border border-outline-variant overflow-hidden flex-shrink-0">
                       <NuxtImg 
                         v-if="item.productImages?.[0]" 
                         :src="item.productImages[0]" 
@@ -296,17 +296,17 @@ const timelineSteps = computed(() => {
                       </div>
                     </div>
                     <div class="flex-1 min-w-0 pt-1">
-                      <p class="text-sm md:text-base font-medium text-stone-900 line-clamp-1">{{ item.productName || 'Unknown Product' }}</p>
-                      <p class="text-xs md:text-sm text-stone-500 mt-0.5 md:mt-1">Qty: {{ item.quantity }}</p>
+                      <p class="text-sm md:text-base font-medium text-on-surface line-clamp-1">{{ item.productName || 'Unknown Product' }}</p>
+                      <p class="text-xs md:text-sm text-on-surface-variant mt-0.5 md:mt-1">Qty: {{ item.quantity }}</p>
                     </div>
                     <div class="text-right shrink-0 pt-1">
-                      <p class="text-sm md:text-base font-semibold text-stone-900">{{ formatPrice(item.priceAtPurchase * item.quantity) }}</p>
-                      <p class="text-[10px] md:text-xs text-stone-500">{{ formatPrice(item.priceAtPurchase) }} each</p>
+                      <p class="text-sm md:text-base font-semibold text-on-surface">{{ formatPrice(item.priceAtPurchase * item.quantity) }}</p>
+                      <p class="text-[10px] md:text-xs text-on-surface-variant">{{ formatPrice(item.priceAtPurchase) }} each</p>
                     </div>
                   </div>
 
                   <!-- Customer Review (if any) -->
-                  <div v-if="item.review" class="mt-2 text-sm bg-white p-3 rounded-lg border border-border">
+                  <div v-if="item.review" class="mt-2 text-sm bg-surface-container-lowest p-3 rounded-lg border border-border">
                     <div class="flex items-center gap-1 mb-1.5">
                       <Star 
                         v-for="i in 5" 
@@ -326,16 +326,16 @@ const timelineSteps = computed(() => {
               <!-- Order Summary -->
               <div class="space-y-2 md:space-y-3">
                 <div class="flex justify-between text-xs md:text-sm">
-                  <span class="text-stone-500">Subtotal</span>
-                  <span class="text-stone-900">{{ formatPrice(order.subtotal) }}</span>
+                  <span class="text-on-surface-variant">Subtotal</span>
+                  <span class="text-on-surface">{{ formatPrice(order.subtotal) }}</span>
                 </div>
                 <div class="flex justify-between text-xs md:text-sm">
-                  <span class="text-stone-500">Shipping</span>
-                  <span class="text-emerald-600 font-medium">Free</span>
+                  <span class="text-on-surface-variant">Shipping</span>
+                  <span class="text-primary font-medium">Free</span>
                 </div>
                 
-                <div v-if="order.discountCode" class="flex justify-between text-xs md:text-sm text-emerald-600">
-                  <span class="flex items-center gap-1.5 bg-emerald-500/10 px-2 rounded font-medium border border-emerald-500/20">
+                <div v-if="order.discountCode" class="flex justify-between text-xs md:text-sm text-primary">
+                  <span class="flex items-center gap-1.5 bg-primary/10 px-2 rounded font-medium border border-primary/20">
                     <Tag class="w-3.5 h-3.5" />
                     {{ order.discountCode.code }}
                   </span>
@@ -343,8 +343,8 @@ const timelineSteps = computed(() => {
                 </div>
                 <Separator />
                 <div class="flex justify-between font-semibold text-base md:text-lg">
-                  <span class="text-stone-900">Total</span>
-                  <span class="text-stone-900">{{ formatPrice(order.total) }}</span>
+                  <span class="text-on-surface">Total</span>
+                  <span class="text-on-surface">{{ formatPrice(order.total) }}</span>
                 </div>
               </div>
             </CardContent>
@@ -353,7 +353,7 @@ const timelineSteps = computed(() => {
           <!-- Sidebar -->
           <div class="space-y-4 md:space-y-6">
             <!-- Shipping Address -->
-            <Card v-if="shippingDetails" class="border-0 shadow-sm">
+            <Card v-if="shippingDetails" class="border-primary shadow-sm">
               <CardHeader class="p-4 md:p-6 pb-3 md:pb-4">
                 <div class="flex items-center gap-2 md:gap-3">
                   <div class="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-violet-100">
@@ -364,7 +364,7 @@ const timelineSteps = computed(() => {
               </CardHeader>
               <CardContent class="p-4 md:p-6 pt-0 md:pt-0">
                 <div class="space-y-1.5 md:space-y-2 text-xs md:text-sm">
-                  <p class="font-medium text-stone-900">{{ shippingDetails.name }}</p>
+                  <p class="font-medium text-on-surface">{{ shippingDetails.name }}</p>
                   <p class="text-stone-600">{{ shippingDetails.address }}</p>
                   <p class="text-stone-600">{{ shippingDetails.city }}</p>
                   <div v-if="shippingDetails.phone" class="flex items-center gap-1.5 md:gap-2 pt-1.5 md:pt-2 text-stone-600">
@@ -376,31 +376,31 @@ const timelineSteps = computed(() => {
             </Card>
 
             <!-- Payment Info -->
-            <Card v-if="order.payment" class="border-0 shadow-sm">
+            <Card v-if="order.payment" class="border-primary shadow-sm">
               <CardHeader class="p-4 md:p-6 pb-3 md:pb-4">
                 <div class="flex items-center gap-2 md:gap-3">
                   <div class="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-emerald-100">
-                    <CreditCard class="w-4 h-4 md:w-5 md:h-5 text-emerald-600" />
+                    <CreditCard class="w-4 h-4 md:w-5 md:h-5 text-primary" />
                   </div>
                   <CardTitle class="text-base md:text-lg">Payment</CardTitle>
                 </div>
               </CardHeader>
               <CardContent class="p-4 md:p-6 pt-0 md:pt-0 space-y-2 md:space-y-3">
                 <div class="flex items-center justify-between">
-                  <span class="text-xs md:text-sm text-stone-500">Status</span>
+                  <span class="text-xs md:text-sm text-on-surface-variant">Status</span>
                   <Badge :class="[getPaymentConfig(order.paymentStatus).class, 'border text-[10px] md:text-xs']">
                     {{ getPaymentConfig(order.paymentStatus).label }}
                   </Badge>
                 </div>
                 <div v-if="order.payment" class="flex items-center justify-between">
-                  <span class="text-xs md:text-sm text-stone-500">Method</span>
+                  <span class="text-xs md:text-sm text-on-surface-variant">Method</span>
                   <span class="text-xs md:text-sm text-stone-700 capitalize">{{ order.payment.provider }}</span>
                 </div>
               </CardContent>
             </Card>
 
             <!-- Need Help -->
-            <Card class="border-0 shadow-sm bg-stone-900 text-white">
+            <Card class="border-primary shadow-sm bg-stone-900 text-white">
               <CardContent class="p-4 md:p-6">
                 <h3 class="font-semibold text-sm md:text-base mb-1.5 md:mb-2">Need Help?</h3>
                 <p class="text-xs md:text-sm text-stone-300 mb-3 md:mb-4">

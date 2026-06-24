@@ -9,7 +9,7 @@ const { clearCart } = useCart()
 const showConfetti = ref(true)
 
 // Monolith palette confetti: navy blues and teals
-const confettiColors = ['bg-[#b1c6ff]', 'bg-[#adc3fe]', 'bg-[#475d92]', 'bg-[#000622]', 'bg-[#394f83]', 'bg-[#e1e3e4]']
+const confettiColors = ['bg-[#b1c6ff]', 'bg-[#adc3fe]', 'bg-primary', 'bg-primary', 'bg-primary', 'bg-[#e1e3e4]']
 
 onMounted(() => {
   clearCart()
@@ -22,7 +22,7 @@ const shareUrl = computed(() => typeof window !== 'undefined' ? window.location.
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#f8f9fa] flex items-center justify-center relative overflow-hidden">
+  <div class="min-h-screen bg-surface flex items-center justify-center relative overflow-hidden">
 
     <!-- Monolith-palette Confetti -->
     <div v-if="showConfetti" class="fixed inset-0 pointer-events-none z-50">
@@ -44,7 +44,7 @@ const shareUrl = computed(() => typeof window !== 'undefined' ? window.location.
       <!-- Top: Order Received -->
       <div class="monolith-gradient p-12 md:p-16 text-center text-white mb-0">
         <!-- Checkmark icon -->
-        <div class="w-16 h-16 bg-white/20 flex items-center justify-center mx-auto mb-8">
+        <div class="w-16 h-16 bg-surface-container-lowest/20 flex items-center justify-center mx-auto mb-8">
           <span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings: 'FILL' 1">check_circle</span>
         </div>
 
@@ -61,54 +61,54 @@ const shareUrl = computed(() => typeof window !== 'undefined' ? window.location.
       </div>
 
       <!-- Bottom: What's Next -->
-      <div class="bg-white border border-[#c5c6d1]/20 p-8 md:p-10">
-        <h2 class="font-headline font-bold text-[#000622] tracking-tight mb-8 text-xl">What Happens Next</h2>
+      <div class="bg-surface-container-lowest border border-outline-variant p-8 md:p-10">
+        <h2 class="font-headline font-bold text-on-surface tracking-tight mb-8 text-xl">What Happens Next</h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
           <div class="flex items-start gap-4">
-            <div class="w-10 h-10 bg-[#f3f4f5] flex items-center justify-center shrink-0">
-              <Mail class="w-5 h-5 text-[#475d92]" />
+            <div class="w-10 h-10 bg-surface-container-low flex items-center justify-center shrink-0">
+              <Mail class="w-5 h-5 text-primary" />
             </div>
             <div>
-              <p class="font-label font-bold uppercase tracking-wide text-sm text-[#000622]">Confirmation Sent</p>
-              <p class="text-xs text-[#454650] font-body mt-1">Check your email inbox for full order details.</p>
+              <p class="font-label font-bold uppercase tracking-wide text-sm text-on-surface">Confirmation Sent</p>
+              <p class="text-xs text-on-surface-variant font-body mt-1">Check your email inbox for full order details.</p>
             </div>
           </div>
 
           <div class="flex items-start gap-4">
-            <div class="w-10 h-10 bg-[#f3f4f5] flex items-center justify-center shrink-0">
-              <Package class="w-5 h-5 text-[#475d92]" />
+            <div class="w-10 h-10 bg-surface-container-low flex items-center justify-center shrink-0">
+              <Package class="w-5 h-5 text-primary" />
             </div>
             <div>
-              <p class="font-label font-bold uppercase tracking-wide text-sm text-[#000622]">Now Processing</p>
-              <p class="text-xs text-[#454650] font-body mt-1">Your items are being carefully packed for dispatch.</p>
+              <p class="font-label font-bold uppercase tracking-wide text-sm text-on-surface">Now Processing</p>
+              <p class="text-xs text-on-surface-variant font-body mt-1">Your items are being carefully packed for dispatch.</p>
             </div>
           </div>
         </div>
 
         <!-- Share Row -->
-        <div class="mb-10 pb-10 border-b border-[#c5c6d1]/15">
+        <div class="mb-10 pb-10 border-b border-outline-variant">
           <div class="flex items-center gap-2 mb-4">
-            <Share2 class="w-4 h-4 text-[#757681]" />
-            <span class="font-label font-bold uppercase tracking-widest text-xs text-[#757681]">Share your purchase</span>
+            <Share2 class="w-4 h-4 text-on-surface-variant" />
+            <span class="font-label font-bold uppercase tracking-widest text-xs text-on-surface-variant">Share your purchase</span>
           </div>
           <div class="flex gap-4">
             <a
               :href="`https://twitter.com/intent/tweet?text=${encodeURIComponent('I just ordered from Lindi\'s Store! 🎉')}&url=${shareUrl}`"
               target="_blank" rel="noopener noreferrer"
-              class="w-10 h-10 bg-[#000622] flex items-center justify-center text-white text-xs font-bold font-label hover:opacity-80 transition-opacity"
+              class="w-10 h-10 bg-primary flex items-center justify-center text-white text-xs font-bold font-label hover:opacity-80 transition-opacity"
               aria-label="Share on Twitter"
             >𝕏</a>
             <a
               :href="`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`"
               target="_blank" rel="noopener noreferrer"
-              class="w-10 h-10 bg-[#475d92] flex items-center justify-center text-white text-xs font-bold font-label hover:opacity-80 transition-opacity"
+              class="w-10 h-10 bg-primary flex items-center justify-center text-white text-xs font-bold font-label hover:opacity-80 transition-opacity"
               aria-label="Share on Facebook"
             >f</a>
             <a
               :href="`https://wa.me/?text=${encodeURIComponent('I just ordered from Lindi\'s Store! 🎉 ' + shareUrl)}`"
               target="_blank" rel="noopener noreferrer"
-              class="w-10 h-10 bg-emerald-600 flex items-center justify-center text-white hover:opacity-80 transition-opacity"
+              class="w-10 h-10 bg-primary flex items-center justify-center text-white hover:opacity-80 transition-opacity"
               aria-label="Share on WhatsApp"
             >
               <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1">chat</span>

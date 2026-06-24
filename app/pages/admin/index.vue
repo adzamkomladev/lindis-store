@@ -62,7 +62,7 @@ const statsCards = computed(() => [
     change: '+12.5%',
     changeType: 'positive' as const,
     icon: DollarSign,
-    accent: 'bg-emerald-500/10 text-emerald-600'
+    accent: 'bg-primary/10 text-primary'
   },
   {
     title: 'Orders',
@@ -70,7 +70,7 @@ const statsCards = computed(() => [
     change: '+8.2%',
     changeType: 'positive' as const,
     icon: ShoppingCart,
-    accent: 'bg-[#adc3fe] text-[#394f83]'
+    accent: 'bg-[#adc3fe] text-primary'
   },
   {
     title: 'Products',
@@ -92,8 +92,8 @@ const statsCards = computed(() => [
 
 const getStatusConfig = (status: string) => {
   const configs: Record<string, { icon: any, class: string, label: string }> = {
-    delivered: { icon: CheckCircle2, class: 'bg-emerald-500/10 text-emerald-700', label: 'Delivered' },
-    shipped: { icon: Package, class: 'bg-[#adc3fe] text-[#394f83]', label: 'Shipped' },
+    delivered: { icon: CheckCircle2, class: 'bg-primary/10 text-primary', label: 'Delivered' },
+    shipped: { icon: Package, class: 'bg-[#adc3fe] text-primary', label: 'Shipped' },
     processing: { icon: Clock, class: 'bg-violet-500/10 text-violet-700', label: 'Processing' },
     pending: { icon: Clock, class: 'bg-amber-500/10 text-amber-700', label: 'Pending' },
     cancelled: { icon: XCircle, class: 'bg-red-500/10 text-red-600', label: 'Cancelled' },
@@ -151,9 +151,9 @@ const getStatusConfig = (status: string) => {
         <div class="flex items-center gap-2">
           <span
             class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 font-label"
-            :class="stat.changeType === 'positive' ? 'bg-emerald-500/10 text-emerald-700'
+            :class="stat.changeType === 'positive' ? 'bg-primary/10 text-primary'
               : stat.changeType === 'negative' ? 'bg-red-500/10 text-red-600'
-              : 'bg-[#edeeef] text-[#757681]'"
+              : 'bg-surface-container-low text-on-surface-variant'"
           >
             <ArrowUpRight v-if="stat.changeType === 'positive'" class="w-2.5 h-2.5" />
             <ArrowDownRight v-else-if="stat.changeType === 'negative'" class="w-2.5 h-2.5" />
@@ -178,8 +178,8 @@ const getStatusConfig = (status: string) => {
             @click="revenuePeriod = period"
             class="px-4 py-2 text-xs font-bold uppercase tracking-widest font-label transition-colors"
             :class="revenuePeriod === period
-              ? 'bg-[#000622] text-white'
-              : 'bg-[#edeeef] text-[#757681] hover:bg-[#e1e3e4]'"
+              ? 'bg-primary text-white'
+              : 'bg-surface-container-low text-on-surface-variant hover:bg-[#e1e3e4]'"
           >
             {{ period }}
           </button>
@@ -189,7 +189,7 @@ const getStatusConfig = (status: string) => {
       <!-- Chart bars -->
       <div class="h-44">
         <div v-if="revenuePending" class="h-full flex items-end gap-2">
-          <div v-for="i in 12" :key="i" class="flex-1 animate-pulse bg-[#edeeef]" :style="{ height: `${20 + Math.random() * 80}%` }" />
+          <div v-for="i in 12" :key="i" class="flex-1 animate-pulse bg-surface-container-low" :style="{ height: `${20 + Math.random() * 80}%` }" />
         </div>
         <template v-else-if="revenueData">
           <div class="flex items-end justify-between gap-1.5 h-full">
@@ -198,14 +198,14 @@ const getStatusConfig = (status: string) => {
               :key="index"
               class="flex-1 transition-all hover:opacity-80 cursor-pointer"
               :style="{ height: `${Math.max(3, (amount / maxRevenue) * 100)}%` }"
-              :class="amount > 0 ? 'bg-[#475d92]' : 'bg-[#edeeef]'"
+              :class="amount > 0 ? 'bg-primary' : 'bg-surface-container-low'"
             />
           </div>
           <div class="flex justify-between mt-2">
             <span
               v-for="(label, idx) in revenueData.labels"
               :key="idx"
-              class="text-[9px] md:text-[10px] text-[#757681] font-label"
+              class="text-[9px] md:text-[10px] text-on-surface-variant font-label"
               :class="{'hidden sm:inline': revenueData.labels.length > 7 && idx % 2 !== 0}"
             >{{ label }}</span>
           </div>
@@ -213,18 +213,18 @@ const getStatusConfig = (status: string) => {
       </div>
 
       <!-- Summary row -->
-      <div v-if="revenueData" class="flex flex-wrap gap-6 mt-6 pt-5 border-t border-[#c5c6d1]/15">
+      <div v-if="revenueData" class="flex flex-wrap gap-6 mt-6 pt-5 border-t border-outline-variant">
         <div class="flex items-center gap-2">
-          <div class="w-3 h-3 bg-[#475d92]"></div>
-          <span class="text-xs font-body text-[#757681]">Revenue: <span class="font-bold text-[#000622]">{{ formatPrice(revenueData.totalRevenue) }}</span></span>
+          <div class="w-3 h-3 bg-primary"></div>
+          <span class="text-xs font-body text-on-surface-variant">Revenue: <span class="font-bold text-on-surface">{{ formatPrice(revenueData.totalRevenue) }}</span></span>
         </div>
         <div class="flex items-center gap-2">
           <div class="w-3 h-3 bg-[#adc3fe]"></div>
-          <span class="text-xs font-body text-[#757681]">Orders: <span class="font-bold text-[#000622]">{{ revenueData.totalOrders }}</span></span>
+          <span class="text-xs font-body text-on-surface-variant">Orders: <span class="font-bold text-on-surface">{{ revenueData.totalOrders }}</span></span>
         </div>
         <div class="flex items-center gap-2">
           <div class="w-3 h-3 bg-amber-400"></div>
-          <span class="text-xs font-body text-[#757681]">Avg. Order: <span class="font-bold text-[#000622]">{{ formatPrice(revenueData.avgOrder) }}</span></span>
+          <span class="text-xs font-body text-on-surface-variant">Avg. Order: <span class="font-bold text-on-surface">{{ formatPrice(revenueData.avgOrder) }}</span></span>
         </div>
       </div>
     </div>
@@ -260,13 +260,13 @@ const getStatusConfig = (status: string) => {
         <div v-if="ordersPending">
           <div v-for="i in 4" :key="i" class="flex items-center justify-between px-6 py-4">
             <div class="flex items-center gap-4">
-              <Skeleton class="w-9 h-9 bg-[#edeeef]" />
+              <Skeleton class="w-9 h-9 bg-surface-container-low" />
               <div class="space-y-1.5">
-                <Skeleton class="h-3 w-24 bg-[#edeeef]" />
-                <Skeleton class="h-2.5 w-32 bg-[#edeeef]" />
+                <Skeleton class="h-3 w-24 bg-surface-container-low" />
+                <Skeleton class="h-2.5 w-32 bg-surface-container-low" />
               </div>
             </div>
-            <Skeleton class="h-5 w-16 bg-[#edeeef]" />
+            <Skeleton class="h-5 w-16 bg-surface-container-low" />
           </div>
         </div>
 
@@ -295,7 +295,7 @@ const getStatusConfig = (status: string) => {
           </NuxtLink>
         </div>
 
-        <div v-else class="flex flex-col items-center justify-center py-16 text-[#757681]">
+        <div v-else class="flex flex-col items-center justify-center py-16 text-on-surface-variant">
           <ShoppingCart class="w-10 h-10 mb-3 opacity-30" />
           <p class="text-sm font-body">No orders yet</p>
         </div>
@@ -309,10 +309,10 @@ const getStatusConfig = (status: string) => {
 
           <div v-if="topSellersPending" class="space-y-6">
             <div v-for="i in 3" :key="i" class="flex items-center gap-4 animate-pulse">
-              <div class="w-12 h-12 rounded-md bg-white/10"></div>
+              <div class="w-12 h-12 rounded-md bg-surface-container-lowest/10"></div>
               <div class="flex-1 space-y-2">
-                <div class="h-3 bg-white/20 w-3/4 rounded"></div>
-                <div class="h-2 bg-white/10 w-1/3 rounded"></div>
+                <div class="h-3 bg-surface-container-lowest/20 w-3/4 rounded"></div>
+                <div class="h-2 bg-surface-container-lowest/10 w-1/3 rounded"></div>
               </div>
             </div>
           </div>
@@ -325,7 +325,7 @@ const getStatusConfig = (status: string) => {
               target="_blank"
               class="flex items-center gap-4 group"
             >
-              <div class="w-12 h-12 rounded-md bg-white/10 flex-shrink-0 flex items-center justify-center text-white/50 overflow-hidden">
+              <div class="w-12 h-12 rounded-md bg-surface-container-lowest/10 flex-shrink-0 flex items-center justify-center text-white/50 overflow-hidden">
                 <NuxtImg v-if="item.images?.[0]" :src="item.images[0]" class="w-full h-full object-cover" />
                 <span v-else class="material-symbols-outlined text-xl">restaurant</span>
               </div>
@@ -341,7 +341,7 @@ const getStatusConfig = (status: string) => {
             <p class="text-sm text-white/60 font-body">No sales data yet</p>
           </div>
 
-          <NuxtLink to="/admin/products" class="block w-full mt-8 py-3 rounded-md border border-white/20 text-white font-label uppercase text-[10px] font-bold tracking-widest hover:bg-white/5 transition-colors text-center">
+          <NuxtLink to="/admin/products" class="block w-full mt-8 py-3 rounded-md border border-white/20 text-white font-label uppercase text-[10px] font-bold tracking-widest hover:bg-surface-container-lowest/5 transition-colors text-center">
             View All Products
           </NuxtLink>
         </div>

@@ -15,10 +15,10 @@ const formatPrice = (amount: number) => {
 
 <template>
   <article 
-    class="group relative flex flex-col overflow-hidden rounded-2xl bg-white border border-stone-100 transition-all duration-500 hover:shadow-xl hover:shadow-stone-200/50 hover:-translate-y-0.5"
+    class="group relative flex flex-col overflow-hidden rounded-2xl bg-surface-container-lowest border border-outline-variant transition-all duration-500 hover:shadow-xl hover:shadow-stone-200/50 hover:-translate-y-0.5"
   >
     <!-- Image Container -->
-    <NuxtLink :to="`/products/${product.slug}`" class="relative aspect-square overflow-hidden bg-stone-50">
+    <NuxtLink :to="`/products/${product.slug}`" class="relative aspect-square overflow-hidden bg-surface-container-low">
       <NuxtImg
         v-if="product.images && product.images.length"
         :src="product.images[0]"
@@ -36,18 +36,18 @@ const formatPrice = (amount: number) => {
     <!-- Content -->
     <div class="flex flex-col gap-3 p-5">
       <div class="flex items-start justify-between gap-3">
-        <h3 class="font-semibold text-stone-900 group-hover:text-stone-700 transition-colors line-clamp-1">
+        <h3 class="font-semibold text-on-surface group-hover:text-stone-700 transition-colors line-clamp-1">
           <NuxtLink :to="`/products/${product.slug}`">
             {{ product.name }}
           </NuxtLink>
         </h3>
       </div>
-      <p v-if="product.description" class="text-sm text-stone-500 line-clamp-2 leading-relaxed">
+      <p v-if="product.description" class="text-sm text-on-surface-variant line-clamp-2 leading-relaxed">
         {{ product.description }}
       </p>
       <div class="flex items-center justify-between pt-2 border-t border-stone-50">
-        <span class="text-lg font-bold text-stone-900">{{ formatPrice(product.price) }}</span>
-        <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
+        <span class="text-lg font-bold text-on-surface">{{ formatPrice(product.price) }}</span>
+        <span class="text-xs font-medium text-primary bg-primary/5 px-2.5 py-1 rounded-full">
           In Stock
         </span>
       </div>

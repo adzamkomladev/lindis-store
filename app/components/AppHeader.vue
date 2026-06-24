@@ -73,8 +73,8 @@ onMounted(() => {
           class="font-headline tracking-tight uppercase text-sm font-bold transition-colors pb-1"
           :class="[
             route.path === link.to
-              ? 'text-[#000622] border-b-2 border-[#000622]'
-              : 'text-slate-500 hover:text-[#000622]'
+              ? 'text-on-surface border-b-2 border-primary'
+              : 'text-on-surface-variant hover:text-on-surface'
           ]"
         >
           {{ link.label }}
@@ -86,7 +86,7 @@ onMounted(() => {
         <!-- Search -->
         <NuxtLink
           to="/search"
-          class="hidden md:block transition-opacity hover:opacity-70 text-[#000622]"
+          class="hidden md:block transition-opacity hover:opacity-70 text-on-surface"
           aria-label="Search"
         >
           <span class="material-symbols-outlined" style="font-size:22px">search</span>
@@ -96,7 +96,7 @@ onMounted(() => {
         <div v-if="isCustomer && loggedIn" class="hidden md:block relative" data-account-menu>
           <button
             @click="accountMenuOpen = !accountMenuOpen"
-            class="flex items-center gap-2 transition-opacity hover:opacity-70 text-[#000622]"
+            class="flex items-center gap-2 transition-opacity hover:opacity-70 text-on-surface"
             aria-label="Account"
           >
             <span class="material-symbols-outlined" style="font-size:22px">person</span>
@@ -112,15 +112,15 @@ onMounted(() => {
           >
             <div
               v-if="accountMenuOpen"
-              class="absolute right-0 top-full mt-3 w-56 bg-white border border-outline-variant/20 shadow-xl rounded-lg z-50 py-2"
+              class="absolute right-0 top-full mt-3 w-56 bg-surface-container-lowest border border-outline-variant/20 shadow-xl rounded-lg z-50 py-2"
             >
               <div class="px-4 py-3 border-b border-outline-variant/10">
-                <p class="text-sm font-bold text-[#000622] font-body">{{ user?.name || user?.email }}</p>
-                <p class="text-xs text-slate-500 font-body truncate">{{ user?.email }}</p>
+                <p class="text-sm font-bold text-on-surface font-body">{{ user?.name || user?.email }}</p>
+                <p class="text-xs text-on-surface-variant font-body truncate">{{ user?.email }}</p>
               </div>
               <NuxtLink
                 to="/account"
-                class="flex items-center gap-3 px-4 py-2.5 text-sm text-[#000622] hover:bg-slate-50 transition-colors font-body"
+                class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container-low transition-colors font-body"
                 @click="accountMenuOpen = false"
               >
                 <User class="w-4 h-4" />
@@ -128,7 +128,7 @@ onMounted(() => {
               </NuxtLink>
               <NuxtLink
                 to="/account/orders"
-                class="flex items-center gap-3 px-4 py-2.5 text-sm text-[#000622] hover:bg-slate-50 transition-colors font-body"
+                class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container-low transition-colors font-body"
                 @click="accountMenuOpen = false"
               >
                 <Package class="w-4 h-4" />
@@ -148,7 +148,7 @@ onMounted(() => {
         <NuxtLink
           v-else
           to="/login"
-          class="hidden md:block transition-opacity hover:opacity-70 text-[#000622]"
+          class="hidden md:block transition-opacity hover:opacity-70 text-on-surface"
           aria-label="Login"
         >
           <span class="material-symbols-outlined" style="font-size:22px">person</span>
@@ -157,13 +157,13 @@ onMounted(() => {
         <!-- Cart -->
         <NuxtLink
           to="/cart"
-          class="relative transition-opacity hover:opacity-70 text-[#000622]"
+          class="relative transition-opacity hover:opacity-70 text-on-surface"
           aria-label="Shopping cart"
         >
           <span class="material-symbols-outlined" style="font-size:22px">shopping_bag</span>
           <span
             v-if="cartCount > 0"
-            class="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-[#000622] text-[9px] font-bold text-white"
+            class="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-white"
           >
             {{ cartCount > 9 ? '9+' : cartCount }}
           </span>
@@ -172,7 +172,7 @@ onMounted(() => {
         <!-- Mobile menu button -->
         <button
           @click="mobileMenuOpen = !mobileMenuOpen"
-          class="md:hidden transition-opacity hover:opacity-70 text-[#000622]"
+          class="md:hidden transition-opacity hover:opacity-70 text-on-surface"
           aria-label="Menu"
         >
           <X v-if="mobileMenuOpen" class="h-5 w-5" />
@@ -212,8 +212,8 @@ onMounted(() => {
             v-for="link in navLinks"
             :key="link.to"
             :to="link.to"
-            class="flex items-center justify-between py-3.5 text-sm font-headline font-bold uppercase tracking-tight text-[#000622]/70 hover:text-[#000622] transition-colors border-b border-outline-variant/10 last:border-0"
-            :class="{ 'text-[#000622]': route.path === link.to }"
+            class="flex items-center justify-between py-3.5 text-sm font-headline font-bold uppercase tracking-tight text-on-surface/70 hover:text-on-surface transition-colors border-b border-outline-variant/10 last:border-primary"
+            :class="{ 'text-on-surface': route.path === link.to }"
           >
             {{ link.label }}
           </NuxtLink>
@@ -221,13 +221,13 @@ onMounted(() => {
           <template v-if="isCustomer && loggedIn">
             <NuxtLink
               to="/account"
-              class="flex items-center justify-between py-3.5 text-sm font-headline font-bold uppercase tracking-tight text-[#000622]/70 hover:text-[#000622] transition-colors border-b border-outline-variant/10"
+              class="flex items-center justify-between py-3.5 text-sm font-headline font-bold uppercase tracking-tight text-on-surface/70 hover:text-on-surface transition-colors border-b border-outline-variant/10"
             >
               My Account
             </NuxtLink>
             <NuxtLink
               to="/account/orders"
-              class="flex items-center justify-between py-3.5 text-sm font-headline font-bold uppercase tracking-tight text-[#000622]/70 hover:text-[#000622] transition-colors border-b border-outline-variant/10"
+              class="flex items-center justify-between py-3.5 text-sm font-headline font-bold uppercase tracking-tight text-on-surface/70 hover:text-on-surface transition-colors border-b border-outline-variant/10"
             >
               My Orders
             </NuxtLink>
@@ -241,7 +241,7 @@ onMounted(() => {
           <template v-else>
             <NuxtLink
               to="/login"
-              class="flex items-center justify-between py-3.5 text-sm font-headline font-bold uppercase tracking-tight text-[#000622]/70 hover:text-[#000622] transition-colors border-b border-outline-variant/10"
+              class="flex items-center justify-between py-3.5 text-sm font-headline font-bold uppercase tracking-tight text-on-surface/70 hover:text-on-surface transition-colors border-b border-outline-variant/10"
             >
               Login / Register
             </NuxtLink>
@@ -249,13 +249,13 @@ onMounted(() => {
 
           <NuxtLink
             to="/cart"
-            class="flex items-center justify-between py-3.5 text-sm font-headline font-bold uppercase tracking-tight text-[#000622]/70 hover:text-[#000622] transition-colors mt-1"
+            class="flex items-center justify-between py-3.5 text-sm font-headline font-bold uppercase tracking-tight text-on-surface/70 hover:text-on-surface transition-colors mt-1"
           >
             <span class="flex items-center gap-3">
               <span class="material-symbols-outlined text-lg">shopping_bag</span>
               Shopping Cart
             </span>
-            <span v-if="cartCount > 0" class="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#000622] text-[10px] font-bold text-white px-1">
+            <span v-if="cartCount > 0" class="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white px-1">
               {{ cartCount }}
             </span>
           </NuxtLink>

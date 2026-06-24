@@ -54,14 +54,14 @@ const pageTitle = computed(() => {
 
 <template>
   <!-- Top Bar -->
-  <header class="h-14 border-b border-[#c5c6d1]/20 bg-[#f8f9fa] flex items-center justify-between px-6 sticky top-0 z-40">
+  <header class="h-14 border-b border-outline-variant bg-surface-container-low flex items-center justify-between px-6 sticky top-0 z-40">
 
     <!-- Left: Mobile Menu + Page Title -->
     <div class="flex items-center gap-4">
       <!-- Mobile menu toggle -->
       <button
         @click="mobileMenuOpen = !mobileMenuOpen"
-        class="md:hidden text-[#757681] hover:text-[#000622] transition-colors"
+        class="md:hidden text-on-surface-variant hover:text-on-surface transition-colors"
         :aria-label="mobileMenuOpen ? 'Close menu' : 'Open menu'"
       >
         <X v-if="mobileMenuOpen" class="w-5 h-5" />
@@ -74,7 +74,7 @@ const pageTitle = computed(() => {
       </div>
 
       <!-- Desktop Page Title -->
-      <h1 class="hidden md:block font-headline font-bold text-[#000622] tracking-tight text-lg uppercase">
+      <h1 class="hidden md:block font-headline font-bold text-on-surface tracking-tight text-lg uppercase">
         {{ pageTitle }}
       </h1>
     </div>
@@ -83,12 +83,12 @@ const pageTitle = computed(() => {
     <div class="flex items-center gap-1">
 
       <!-- Search -->
-      <button class="hidden md:flex w-8 h-8 items-center justify-center text-[#757681] hover:text-[#000622] transition-colors" aria-label="Search">
+      <button class="hidden md:flex w-8 h-8 items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" aria-label="Search">
         <Search class="w-4 h-4" />
       </button>
 
       <!-- Notifications -->
-      <button class="relative w-8 h-8 flex items-center justify-center text-[#757681] hover:text-[#000622] transition-colors" aria-label="Notifications">
+      <button class="relative w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" aria-label="Notifications">
         <Bell class="w-4 h-4" />
         <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
       </button>
@@ -98,14 +98,14 @@ const pageTitle = computed(() => {
       <!-- User Popover -->
       <Popover>
         <PopoverTrigger as-child>
-          <button class="flex items-center gap-2 px-2 py-1 hover:bg-[#edeeef] transition-colors">
+          <button class="flex items-center gap-2 px-2 py-1 hover:bg-surface-container-low transition-colors">
             <Avatar class="w-7 h-7">
-              <AvatarFallback class="bg-[#000622] text-white text-[10px] font-bold font-label">AD</AvatarFallback>
+              <AvatarFallback class="bg-primary text-white text-[10px] font-bold font-label">AD</AvatarFallback>
             </Avatar>
-            <span class="hidden md:block text-sm font-bold text-[#000622] font-label uppercase tracking-wide text-xs">Admin</span>
+            <span class="hidden md:block text-sm font-bold text-on-surface font-label uppercase tracking-wide text-xs">Admin</span>
           </button>
         </PopoverTrigger>
-        <PopoverContent class="w-44 p-2 bg-white border-[#c5c6d1]/20" align="end">
+        <PopoverContent class="w-44 p-2 bg-surface-container-lowest border-outline-variant" align="end">
           <button
             @click="handleLogout"
             class="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors font-label font-bold uppercase tracking-wide text-xs"
@@ -129,10 +129,10 @@ const pageTitle = computed(() => {
   >
     <div v-if="mobileMenuOpen" class="fixed inset-0 z-30 md:hidden">
       <!-- Backdrop -->
-      <div class="absolute inset-0 bg-[#000622]/60 backdrop-blur-sm" @click="mobileMenuOpen = false" />
+      <div class="absolute inset-0 bg-primary/60 backdrop-blur-sm" @click="mobileMenuOpen = false" />
 
       <!-- Drawer -->
-      <div class="absolute left-0 top-14 bottom-0 w-72 bg-[#000622] border-r border-white/8 shadow-2xl">
+      <div class="absolute left-0 top-14 bottom-0 w-72 bg-primary border-r border-white/8 shadow-2xl">
         <nav class="p-4 space-y-0.5">
           <NuxtLink
             v-for="item in navItems"
@@ -140,8 +140,8 @@ const pageTitle = computed(() => {
             :to="item.to"
             class="flex items-center gap-3 px-3 py-3 text-sm font-medium transition-all"
             :class="route.path.startsWith(item.to) && (item.to !== '/admin' || route.path === '/admin')
-              ? 'bg-white/10 text-white border-l-2 border-[#b1c6ff]'
-              : 'text-white/50 hover:bg-white/6 hover:text-white'"
+              ? 'bg-surface-container-lowest/10 text-white border-l-2 border-[#b1c6ff]'
+              : 'text-white/50 hover:bg-surface-container-lowest/6 hover:text-white'"
           >
             <component :is="item.icon" class="w-4 h-4 shrink-0" />
             <span class="font-label text-xs uppercase tracking-widest">{{ item.title }}</span>

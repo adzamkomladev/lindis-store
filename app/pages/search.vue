@@ -37,7 +37,7 @@ useSeoMeta({
             v-model="query"
             type="text"
             placeholder="Search products, categories..."
-            class="w-full bg-surface-container-low rounded-sm border-0 py-4 pl-12 pr-12 text-lg font-body focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant text-on-surface"
+            class="w-full bg-surface-container-low rounded-sm border-primary py-4 pl-12 pr-12 text-lg font-body focus:ring-primary focus:ring-primary/20 transition-all placeholder:text-outline-variant text-on-surface"
             @keyup.enter="performSearch"
           />
           <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant" />
@@ -47,7 +47,7 @@ useSeoMeta({
         </div>
         <button
           @click="performSearch"
-          class="mt-4 px-8 py-3 bg-[#000622] text-white font-label font-bold uppercase text-xs tracking-widest hover:opacity-90 transition-opacity"
+          class="mt-4 px-8 py-3 bg-primary text-white font-label font-bold uppercase text-xs tracking-widest hover:opacity-90 transition-opacity"
         >
           Search
         </button>
@@ -89,7 +89,7 @@ useSeoMeta({
                 <Package class="w-12 h-12" />
               </div>
               <div v-if="product.category" class="absolute top-3 left-3">
-                <span class="bg-white/90 backdrop-blur-sm text-on-surface text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded shadow-sm border border-black/5">
+                <span class="bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded shadow-sm border border-black/5">
                   {{ product.category }}
                 </span>
               </div>
@@ -114,7 +114,7 @@ useSeoMeta({
       <!-- No Results -->
       <div v-else-if="query && !pending" class="text-center py-24">
         <Package class="w-12 h-12 mx-auto text-outline-variant mb-4" />
-        <h2 class="font-headline font-medium italic text-2xl text-on-surface mb-2">No results found</h2>
+        <h2 class="font-headline font-medium italic text-on-surfacexl text-on-surface mb-2">No results found</h2>
         <p class="text-sm text-on-surface-variant font-body">Try searching with different keywords.</p>
       </div>
     </div>

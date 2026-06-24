@@ -14,10 +14,10 @@ import {
 
 <template>
   <div class="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-md lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
-    <Card class="@container/card border-0">
+    <Card class="@container/card border-primary">
       <CardHeader>
         <CardDescription>Total Revenue</CardDescription>
-        <CardTitle class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+        <CardTitle class="text-on-surfacexl font-semibold tabular-nums @[250px]/card:text-3xl">
           $1,250.00
         </CardTitle>
         <CardAction>
@@ -36,10 +36,10 @@ import {
         </div>
       </CardFooter>
     </Card>
-    <Card class="@container/card border-0">
+    <Card class="@container/card border-primary">
       <CardHeader>
         <CardDescription>New Customers</CardDescription>
-        <CardTitle class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+        <CardTitle class="text-on-surfacexl font-semibold tabular-nums @[250px]/card:text-3xl">
           1,234
         </CardTitle>
         <CardAction>
@@ -58,10 +58,10 @@ import {
         </div>
       </CardFooter>
     </Card>
-    <Card class="@container/card border-0">
+    <Card class="@container/card border-primary">
       <CardHeader>
         <CardDescription>Active Accounts</CardDescription>
-        <CardTitle class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+        <CardTitle class="text-on-surfacexl font-semibold tabular-nums @[250px]/card:text-3xl">
           45,678
         </CardTitle>
         <CardAction>
@@ -80,10 +80,10 @@ import {
         </div>
       </CardFooter>
     </Card>
-    <Card class="@container/card border-0">
+    <Card class="@container/card border-primary">
       <CardHeader>
         <CardDescription>Growth Rate</CardDescription>
-        <CardTitle class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+        <CardTitle class="text-on-surfacexl font-semibold tabular-nums @[250px]/card:text-3xl">
           4.5%
         </CardTitle>
         <CardAction>

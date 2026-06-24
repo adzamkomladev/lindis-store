@@ -123,7 +123,7 @@ useSeoMeta({
               </SheetTrigger>
               <SheetContent class="bg-surface-container-lowest border-outline-variant/20">
                 <SheetHeader>
-                  <SheetTitle class="font-headline font-medium text-2xl italic text-on-surface">Filters</SheetTitle>
+                  <SheetTitle class="font-headline font-medium text-on-surfacexl italic text-on-surface">Filters</SheetTitle>
                   <SheetDescription class="font-body text-sm text-on-surface-variant">Refine your selection.</SheetDescription>
                 </SheetHeader>
                 <div class="py-8 space-y-8">
@@ -237,7 +237,7 @@ useSeoMeta({
                       <Package class="w-12 h-12" />
                     </div>
                     <div v-if="product.category" class="absolute top-3 left-3">
-                      <span class="bg-white/90 backdrop-blur-sm text-on-surface text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded shadow-sm border border-black/5">{{ product.category }}</span>
+                      <span class="bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded shadow-sm border border-black/5">{{ product.category }}</span>
                     </div>
                     <div class="absolute top-3 right-3" @click.prevent>
                       <ProductWishlistButton v-if="product._id || product.id" :product-id="(product._id || product.id).toString()" />
@@ -267,7 +267,7 @@ useSeoMeta({
           <!-- Empty State -->
           <div v-else class="py-24 text-center bg-surface-container-lowest rounded-xl border border-outline-variant/10">
             <Package class="w-12 h-12 mx-auto text-outline-variant mb-4" />
-            <h2 class="font-headline font-medium italic text-2xl text-on-surface mb-2">No Artifacts Found</h2>
+            <h2 class="font-headline font-medium italic text-on-surfacexl text-on-surface mb-2">No Artifacts Found</h2>
             <p class="text-sm text-on-surface-variant font-body mb-8">Adjust your filters or check back soon for new arrivals.</p>
             <button @click="clearAllFilters" class="btn-primary px-8 py-3 rounded-md text-white font-label font-bold uppercase text-[10px] tracking-widest shadow-sm">Clear Filters</button>
           </div>
@@ -287,7 +287,7 @@ useSeoMeta({
                 :key="p"
                 @click="page = p"
                 class="w-8 h-8 rounded-md text-xs font-body font-bold transition-colors"
-                :class="page === p ? 'bg-[#000622] text-white' : 'text-on-surface hover:bg-surface-container-low'"
+                :class="page === p ? 'bg-primary text-white' : 'text-on-surface hover:bg-surface-container-low'"
               >
                 {{ p }}
               </button>

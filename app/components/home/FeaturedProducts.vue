@@ -42,7 +42,7 @@ const sideProducts = computed(() => props.products?.slice(1, 3) ?? [])
             <div v-else class="w-full h-full flex items-center justify-center text-outline-variant">
               <span class="material-symbols-outlined text-5xl">inventory_2</span>
             </div>
-            <div v-if="product.stock === 0" class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-bold text-on-surface tracking-widest uppercase">
+            <div v-if="product.stock === 0" class="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-bold text-on-surface tracking-widest uppercase">
               Sold Out
             </div>
           </NuxtLink>

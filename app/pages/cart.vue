@@ -22,12 +22,12 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#f8f9fa]">
+  <div class="min-h-screen bg-surface">
 
     <!-- Editorial Page Header -->
     <section class="pt-40 pb-16 px-8 max-w-screen-2xl mx-auto">
-      <span class="text-[#475d92] font-label font-bold uppercase tracking-widest text-xs mb-2 block">Your Selection</span>
-      <h1 class="font-headline font-black tracking-tighter text-[#000622] leading-none" style="font-size: clamp(2.5rem, 6vw, 4rem)">
+      <span class="text-primary font-label font-bold uppercase tracking-widest text-xs mb-2 block">Your Selection</span>
+      <h1 class="font-headline font-black tracking-tighter text-on-surface leading-none" style="font-size: clamp(2.5rem, 6vw, 4rem)">
         Shopping Cart
       </h1>
     </section>
@@ -52,7 +52,7 @@ useSeoMeta({
           <div class="mt-16">
             <NuxtLink
               to="/products"
-              class="inline-flex items-center gap-2 text-[#000622] font-bold uppercase tracking-widest text-sm font-label hover:opacity-70 transition-opacity group"
+              class="inline-flex items-center gap-2 text-on-surface font-bold uppercase tracking-widest text-sm font-label hover:opacity-70 transition-opacity group"
             >
               <span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">west</span>
               Continue Shopping
@@ -68,7 +68,7 @@ useSeoMeta({
 
       <!-- Recommendations -->
       <section v-if="recommendations?.length" class="mt-32">
-        <h2 class="font-headline font-black text-[#000622] mb-12 tracking-tighter" style="font-size: 1.75rem">
+        <h2 class="font-headline font-black text-on-surface mb-12 tracking-tighter" style="font-size: 1.75rem">
           You might also appreciate
         </h2>
         <!-- Asymmetric bento: large first, 2 regular -->
@@ -77,7 +77,7 @@ useSeoMeta({
           <NuxtLink
             v-if="recommendations[0]"
             :to="`/products/${recommendations[0].slug}`"
-            class="md:col-span-2 bg-[#edeeef] group overflow-hidden relative"
+            class="md:col-span-2 bg-surface-container-low group overflow-hidden relative"
             style="min-height: 400px"
           >
             <NuxtImg
@@ -90,7 +90,7 @@ useSeoMeta({
               <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-white mb-1 font-label">
                 {{ recommendations[0].category || 'Collection' }}
               </p>
-              <h3 class="text-white font-headline font-bold text-2xl uppercase tracking-tight">{{ recommendations[0].name }}</h3>
+              <h3 class="text-white font-headline font-bold text-on-surfacexl uppercase tracking-tight">{{ recommendations[0].name }}</h3>
             </div>
           </NuxtLink>
 
@@ -99,7 +99,7 @@ useSeoMeta({
             v-for="product in recommendations.slice(1, 3)"
             :key="product.id"
             :to="`/products/${product.slug}`"
-            class="aspect-[3/4] bg-[#edeeef] group overflow-hidden"
+            class="aspect-[3/4] bg-surface-container-low group overflow-hidden"
           >
             <div class="relative h-full">
               <NuxtImg
@@ -108,7 +108,7 @@ useSeoMeta({
                 :alt="product.name"
                 class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
               />
-              <div class="p-5 absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#000622]/60 to-transparent">
+              <div class="p-5 absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/60 to-transparent">
                 <h3 class="font-headline font-bold text-lg text-white uppercase tracking-tight">{{ product.name }}</h3>
                 <p class="text-[#b1c6ff] font-bold text-sm font-label">{{ formatPrice(product.price) }}</p>
               </div>

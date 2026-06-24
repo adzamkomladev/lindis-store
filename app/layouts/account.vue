@@ -18,15 +18,15 @@ const isActive = (item: typeof navItems[0]) => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#f8f9fa]">
+  <div class="min-h-screen bg-surface">
     <div class="max-w-screen-2xl mx-auto px-8 py-12">
       <div class="flex flex-col lg:flex-row gap-12">
         <!-- Sidebar -->
         <aside class="w-full lg:w-64 shrink-0">
-          <div class="bg-white border border-[#c5c6d1]/20 p-6">
-            <div class="mb-6 pb-6 border-b border-[#c5c6d1]/15">
-              <p class="font-headline font-bold text-[#000622] text-lg">{{ user?.name || 'My Account' }}</p>
-              <p class="text-xs text-[#757681] font-body mt-1">{{ user?.email }}</p>
+          <div class="bg-surface-container-lowest border border-outline-variant p-6">
+            <div class="mb-6 pb-6 border-b border-outline-variant">
+              <p class="font-headline font-bold text-on-surface text-lg">{{ user?.name || 'My Account' }}</p>
+              <p class="text-xs text-on-surface-variant font-body mt-1">{{ user?.email }}</p>
             </div>
             <nav class="space-y-1">
               <NuxtLink
@@ -35,8 +35,8 @@ const isActive = (item: typeof navItems[0]) => {
                 :to="item.to"
                 class="flex items-center gap-3 px-4 py-3 text-sm font-body transition-colors"
                 :class="isActive(item)
-                  ? 'bg-[#000622] text-white font-bold'
-                  : 'text-[#757681] hover:bg-[#f3f4f5] hover:text-[#000622]'"
+                  ? 'bg-primary text-white font-bold'
+                  : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'"
               >
                 <component :is="item.icon" class="w-4 h-4" />
                 {{ item.label }}

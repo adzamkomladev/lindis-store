@@ -11,7 +11,7 @@ defineProps<{
 <template>
   <section class="w-full relative bg-background pb-16">
     <!-- Image Header -->
-    <div class="relative h-[65vh] min-h-[500px] w-full mt-4 container max-w-screen-2xl mx-auto rounded-lg overflow-hidden border-0">
+    <div class="relative h-[65vh] min-h-[500px] w-full mt-4 container max-w-screen-2xl mx-auto rounded-lg overflow-hidden border-primary">
       <NuxtImg
         src="/storefront_hero_kitchen.png"
         alt="Premium Lindi's Store kitchen"

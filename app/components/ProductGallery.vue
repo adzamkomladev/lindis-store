@@ -22,29 +22,29 @@ const prev = () => {
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <!-- Large hero image (spans both columns on mobile, 2 cols on md) -->
-    <div class="md:col-span-2 overflow-hidden aspect-[4/5] bg-[#f3f4f5] group relative">
+    <div class="md:col-span-2 overflow-hidden aspect-[4/5] bg-surface-container-low group relative">
       <NuxtImg
         v-if="selectedImage"
         :src="selectedImage"
         :alt="`Product image`"
         class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
       />
-      <div v-else class="w-full h-full flex items-center justify-center text-[#c5c6d1]">
-        <span class="material-symbols-outlined text-6xl">inventory_2</span>
+      <div v-else class="w-full h-full flex items-center justify-center text-on-surface-variant">
+        <span class="material-symbols-outlined text-on-surfacexl">inventory_2</span>
       </div>
 
       <!-- Navigation arrows on mobile -->
       <template v-if="images?.length > 1">
         <button
           @click="prev"
-          class="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-white/90 text-[#000622] hover:bg-white transition-colors md:hidden"
+          class="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-surface-container-lowest/90 text-on-surface hover:bg-surface-container-lowest transition-colors md:hidden"
           aria-label="Previous image"
         >
           <span class="material-symbols-outlined text-lg">chevron_left</span>
         </button>
         <button
           @click="next"
-          class="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-white/90 text-[#000622] hover:bg-white transition-colors md:hidden"
+          class="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-surface-container-lowest/90 text-on-surface hover:bg-surface-container-lowest transition-colors md:hidden"
           aria-label="Next image"
         >
           <span class="material-symbols-outlined text-lg">chevron_right</span>
@@ -58,7 +58,7 @@ const prev = () => {
           :key="idx"
           @click="selectedIndex = idx"
           class="w-2 h-2 rounded-full transition-all duration-200"
-          :class="idx === selectedIndex ? 'bg-[#000622] w-4' : 'bg-[#000622]/30'"
+          :class="idx === selectedIndex ? 'bg-primary w-4' : 'bg-primary/30'"
         />
       </div>
     </div>
@@ -68,8 +68,8 @@ const prev = () => {
       <div
         v-for="(img, idx) in images.slice(0, 2)"
         :key="idx"
-        class="hidden md:block aspect-square overflow-hidden bg-[#f3f4f5] cursor-pointer relative"
-        :class="idx === selectedIndex ? 'ring-2 ring-[#000622]' : 'hover:opacity-80 transition-opacity'"
+        class="hidden md:block aspect-square overflow-hidden bg-surface-container-low cursor-pointer relative"
+        :class="idx === selectedIndex ? 'ring-primary ring-primary' : 'hover:opacity-80 transition-opacity'"
         @click="selectedIndex = idx"
       >
         <NuxtImg

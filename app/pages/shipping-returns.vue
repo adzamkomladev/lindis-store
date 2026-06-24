@@ -12,7 +12,7 @@ useSeoMeta({
     </section>
     <div class="px-8 max-w-3xl mx-auto py-16 pb-24 space-y-12">
       <div>
-        <h2 class="font-headline font-bold text-2xl text-on-surface mb-4">Shipping Policy</h2>
+        <h2 class="font-headline font-bold text-on-surfacexl text-on-surface mb-4">Shipping Policy</h2>
         <p class="text-on-surface-variant font-body leading-relaxed mb-4">
           We offer free shipping on all orders within Ghana. Orders are typically processed within 1-2 business days and delivered within 3-7 business days depending on your location.
         </p>
@@ -23,7 +23,7 @@ useSeoMeta({
         </ul>
       </div>
       <div>
-        <h2 class="font-headline font-bold text-2xl text-on-surface mb-4">Returns & Exchanges</h2>
+        <h2 class="font-headline font-bold text-on-surfacexl text-on-surface mb-4">Returns & Exchanges</h2>
         <p class="text-on-surface-variant font-body leading-relaxed mb-4">
           We accept returns within 14 days of delivery for items in their original condition. To initiate a return, please contact our support team with your order number.
         </p>

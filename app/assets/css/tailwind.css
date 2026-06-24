@@ -180,6 +180,34 @@
     font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
   }
 
+  /* Typography Scale — Editorial Moments */
+  .display-lg {
+    font-family: "Noto Serif", ui-serif, Georgia, serif;
+    font-size: 3.5rem;
+    line-height: 1.1;
+  }
+  .headline-sm {
+    font-family: "Noto Serif", ui-serif, Georgia, serif;
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+  .body-lg {
+    font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  .label-md {
+    font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* CTA Gradient — primary to primary-container */
+  .btn-gradient {
+    background: linear-gradient(180deg, #1f4231 0%, #173124 100%);
+  }
+
   /* Soft Domed Button */
   .btn-primary {
     @apply bg-primary text-white hover:bg-primary-container transition-all active:scale-[0.98] shadow-sm;
@@ -202,7 +230,7 @@
 
   /* Erase strict axis borders in favor of padding margins */
   .monolith-axis {
-    @apply border-0 pl-12;
+    @apply border-primary pl-12;
   }
 
   .scrollbar-hide {

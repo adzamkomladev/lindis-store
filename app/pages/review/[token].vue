@@ -106,7 +106,7 @@ const formatPrice = (amount: number) =>
         <div class="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-4">
           <AlertCircle class="w-8 h-8 text-destructive" />
         </div>
-        <h1 class="font-serif text-2xl font-bold text-foreground mb-2">Link not valid</h1>
+        <h1 class="font-serif text-on-surfacexl font-bold text-foreground mb-2">Link not valid</h1>
         <p class="text-muted-foreground">
           <template v-if="tokenData?.reason === 'expired'">
             This review link has expired. Review links are valid for 7 days after delivery.
@@ -128,7 +128,7 @@ const formatPrice = (amount: number) =>
         <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
           <CheckCircle2 class="w-8 h-8 text-primary" />
         </div>
-        <h1 class="font-serif text-2xl font-bold text-foreground mb-2">Thank you!</h1>
+        <h1 class="font-serif text-on-surfacexl font-bold text-foreground mb-2">Thank you!</h1>
         <p class="text-muted-foreground">Your review has been submitted. We truly appreciate your feedback.</p>
         <NuxtLink to="/" class="inline-block mt-6 px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors">
           Continue Shopping
@@ -194,14 +194,14 @@ const formatPrice = (amount: number) =>
                   type="text"
                   placeholder="Review title (optional)"
                   maxlength="100"
-                  class="w-full px-4 py-2.5 text-sm border border-input rounded-xl bg-muted/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  class="w-full px-4 py-2.5 text-sm border border-input rounded-xl bg-muted/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-primary focus:ring-primary/30"
                 />
                 <textarea
                   v-model="itemReviews[item.id].comment"
                   placeholder="Tell us more about your experience (optional)"
                   maxlength="2000"
                   rows="3"
-                  class="w-full px-4 py-2.5 text-sm border border-input rounded-xl bg-muted/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                  class="w-full px-4 py-2.5 text-sm border border-input rounded-xl bg-muted/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-primary focus:ring-primary/30 resize-none"
                 ></textarea>
               </div>
             </template>

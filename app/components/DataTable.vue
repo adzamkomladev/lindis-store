@@ -350,7 +350,7 @@ const table = useVueTable({
       value="outline"
       class="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
     >
-      <div class="overflow-hidden rounded-lg shadow-md border-0 bg-card">
+      <div class="overflow-hidden rounded-lg shadow-md border-primary bg-card">
         <DragDropProvider :modifiers="[RestrictToVerticalAxis]">
           <Table>
             <TableHeader class="bg-muted sticky top-0 z-10">

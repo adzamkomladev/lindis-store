@@ -71,7 +71,7 @@ const onSubmit = handleSubmit(async (values) => {
               type="email"
               autocomplete="email"
               placeholder="henry@culinaryheritage.com"
-              class="w-full bg-surface-container-low rounded-sm border-0 py-3 px-4 text-sm font-body focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant"
+              class="w-full bg-surface-container-low rounded-sm border-primary py-3 px-4 text-sm font-body focus:ring-primary focus:ring-primary/20 transition-all placeholder:text-outline-variant"
             />
             <p v-if="errors.email" class="text-xs text-red-600 font-body">{{ errors.email }}</p>
           </div>
@@ -89,7 +89,7 @@ const onSubmit = handleSubmit(async (values) => {
                 :type="showPassword ? 'text' : 'password'"
                 autocomplete="current-password"
                 placeholder="••••••••"
-                class="w-full bg-surface-container-low rounded-sm border-0 py-3 px-4 pr-10 text-sm font-body focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant text-on-surface"
+                class="w-full bg-surface-container-low rounded-sm border-primary py-3 px-4 pr-10 text-sm font-body focus:ring-primary focus:ring-primary/20 transition-all placeholder:text-outline-variant text-on-surface"
               />
               <button
                 type="button"
@@ -108,7 +108,7 @@ const onSubmit = handleSubmit(async (values) => {
             :disabled="isSubmitting"
             class="w-full py-4 rounded-md font-label font-bold uppercase tracking-widest text-sm btn-primary flex items-center justify-center gap-3 disabled:opacity-60"
           >
-            <div v-if="isSubmitting" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div v-if="isSubmitting" class="w-4 h-4 border-primary border-white/30 border-t-white rounded-full animate-spin" />
             {{ isSubmitting ? 'Signing In...' : 'Sign In' }}
           </button>
 

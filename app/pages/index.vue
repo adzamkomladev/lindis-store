@@ -84,11 +84,11 @@ useSeoMeta({
       <div class="flex flex-col lg:flex-row gap-16 items-center">
         <!-- Asymmetric Graphics -->
         <div class="w-full lg:w-1/2 flex items-end gap-6 relative">
-             <div class="w-1/2 aspect-square bg-[#111] rounded-xl shadow-lg border border-white/10 flex items-center justify-center relative translate-y-8">
+             <div class="w-1/2 aspect-square bg-primary rounded-xl shadow-lg border border-white/10 flex items-center justify-center relative translate-y-8">
                 <span class="font-headline text-secondary text-9xl font-black absolute z-10 bottom-4">1</span>
              </div>
-             <div class="w-[55%] aspect-square bg-[#1f404d] rounded-xl shadow-lg border border-white/10 flex items-center justify-center relative">
-                <span class="font-headline text-[#c56d47] text-[12rem] font-black absolute z-10 -bottom-8">2</span>
+             <div class="w-[55%] aspect-square bg-primary rounded-xl shadow-lg border border-white/10 flex items-center justify-center relative">
+                <span class="font-headline text-secondary text-[12rem] font-black absolute z-10 -bottom-8">2</span>
              </div>
         </div>
 
@@ -132,7 +132,7 @@ useSeoMeta({
         </p>
 
         <form class="flex flex-col sm:flex-row gap-4" @submit.prevent>
-           <input type="email" placeholder="Your email address" class="flex-1 bg-white/10 border-0 rounded-md py-4 px-6 text-white placeholder:text-white/40 focus:ring-2 focus:ring-secondary/50 font-body text-sm" />
+           <input type="email" placeholder="Your email address" class="flex-1 bg-surface-container-lowest/10 border-primary rounded-md py-4 px-6 text-white placeholder:text-white/40 focus:ring-primary focus:ring-secondary/50 font-body text-sm" />
            <button class="bg-secondary hover:bg-secondary-container transition-colors text-white font-label uppercase text-xs tracking-widest font-bold py-4 px-8 rounded-md whitespace-nowrap">
              Subscribe
            </button>

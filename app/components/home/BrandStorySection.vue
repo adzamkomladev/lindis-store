@@ -9,7 +9,7 @@ defineProps<{
 </script>
 
 <template>
-  <section class="bg-[#000622] py-24 text-center">
+  <section class="bg-primary py-24 text-center">
     <div class="max-w-4xl mx-auto px-8">
       <h3 class="font-headline text-3xl md:text-4xl font-bold text-white mb-16 tracking-tighter uppercase">
         Our Impact Since 2021

@@ -148,7 +148,7 @@ const formatDate = (date: string | Date) =>
           <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-background border border-border shadow-sm mb-4">
             <Package class="w-6 h-6 text-primary" />
           </div>
-          <h3 class="font-serif text-2xl font-bold text-foreground mb-2">No specifications</h3>
+          <h3 class="font-serif text-on-surfacexl font-bold text-foreground mb-2">No specifications</h3>
           <p class="text-muted-foreground text-sm">Specifications haven't been added for this product yet.</p>
         </div>
       </TabsContent>
@@ -216,7 +216,7 @@ const formatDate = (date: string | Date) =>
               class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-sm font-medium text-foreground hover:bg-muted/50 transition-colors"
             >
               <ChevronDown v-if="!isLoadingReviews" class="w-4 h-4" />
-              <div v-else class="w-4 h-4 border-2 border-muted-foreground/30 border-t-foreground rounded-full animate-spin"></div>
+              <div v-else class="w-4 h-4 border-primary border-muted-foreground/30 border-t-foreground rounded-full animate-spin"></div>
               {{ isLoadingReviews ? 'Loading...' : 'Load more reviews' }}
             </button>
           </div>
@@ -227,7 +227,7 @@ const formatDate = (date: string | Date) =>
           <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-background border border-border shadow-sm mb-4">
             <Star class="w-6 h-6 text-primary" />
           </div>
-          <h3 class="font-serif text-2xl font-bold text-foreground mb-2">No reviews yet</h3>
+          <h3 class="font-serif text-on-surfacexl font-bold text-foreground mb-2">No reviews yet</h3>
           <p class="text-muted-foreground text-sm">Be the first to purchase and review this product!</p>
         </div>
       </TabsContent>

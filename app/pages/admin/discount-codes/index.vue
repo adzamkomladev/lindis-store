@@ -115,17 +115,17 @@ const visiblePages = computed(() => {
     <!-- Header -->
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <p class="text-[#475d92] font-label font-bold uppercase tracking-[0.2em] text-xs mb-1">Promotions</p>
-        <h2 class="font-headline font-black text-[#000622] tracking-tighter uppercase text-2xl">Discount Codes</h2>
+        <p class="text-primary font-label font-bold uppercase tracking-[0.2em] text-xs mb-1">Promotions</p>
+        <h2 class="font-headline font-black text-on-surface tracking-tighter uppercase text-on-surfacexl">Discount Codes</h2>
       </div>
       <div class="flex items-center gap-3">
         <!-- Search -->
         <div class="relative">
-          <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#757681]" />
+          <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant" />
           <input
             v-model="searchQuery"
             placeholder="SEARCH CODES"
-            class="pl-9 pr-4 py-2.5 border border-[#c5c6d1] bg-[#f8f9fa] text-xs font-label font-bold uppercase tracking-widest focus:outline-none focus:border-[#000622] transition-colors placeholder:text-[#c5c6d1] w-48"
+            class="pl-9 pr-4 py-2.5 border border-outline-variant bg-surface-container-low label-md focus:outline-none focus:border-primary transition-colors placeholder:text-on-surface-variant w-48"
           />
         </div>
         <button @click="openCreate" class="monolith-gradient px-5 py-2.5 text-white font-label font-bold uppercase text-xs tracking-widest flex items-center gap-2 hover:opacity-90 transition-opacity">
@@ -135,41 +135,41 @@ const visiblePages = computed(() => {
     </div>
 
     <!-- Codes list -->
-    <div class="bg-white border border-[#c5c6d1]/20">
+    <div class="bg-surface-container-lowest border border-outline-variant">
       <div v-if="!filteredCodes?.length" class="py-16 text-center">
-        <div class="w-14 h-14 bg-[#f3f4f5] flex items-center justify-center mx-auto mb-4">
-          <Tag class="w-7 h-7 text-[#c5c6d1]" />
+        <div class="w-14 h-14 bg-surface-container-low flex items-center justify-center mx-auto mb-4">
+          <Tag class="w-7 h-7 text-on-surface-variant" />
         </div>
-        <h3 class="font-headline font-bold text-[#000622] uppercase tracking-tight mb-2">
+        <h3 class="font-headline font-bold text-on-surface uppercase tracking-tight mb-2">
           {{ searchQuery ? 'No codes found' : 'No discount codes yet' }}
         </h3>
-        <p class="text-sm text-[#757681] font-body">
+        <p class="text-sm text-on-surface-variant font-body">
           {{ searchQuery ? 'Try a different search term' : 'Create your first code to start offering promotions.' }}
         </p>
       </div>
 
       <div v-else class="divide-y divide-[#c5c6d1]/10">
-        <div v-for="code in paginatedCodes" :key="code.id" class="flex items-center gap-4 px-6 py-4 hover:bg-[#f8f9fa] transition-colors">
+        <div v-for="code in paginatedCodes" :key="code.id" class="flex items-center gap-4 px-6 py-4 hover:bg-surface-container-low transition-colors">
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-3 flex-wrap">
-              <span class="font-mono font-black text-[#000622] text-sm tracking-widest uppercase">{{ code.code }}</span>
-              <span :class="code.isActive && !isExpired(code) ? 'bg-emerald-500/10 text-emerald-700' : 'bg-[#edeeef] text-[#757681]'"
+              <span class="font-mono font-black text-on-surface text-sm tracking-widest uppercase">{{ code.code }}</span>
+              <span :class="code.isActive && !isExpired(code) ? 'bg-primary/10 text-primary' : 'bg-surface-container-low text-on-surface-variant'"
                 class="px-2 py-0.5 text-[10px] font-label font-bold uppercase tracking-widest">
                 {{ isExpired(code) ? 'Expired' : code.isActive ? 'Active' : 'Inactive' }}
               </span>
-              <span class="px-2 py-0.5 border border-[#c5c6d1] text-[10px] font-label font-bold uppercase tracking-widest text-[#757681]">
+              <span class="px-2 py-0.5 border border-outline-variant text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant">
                 {{ code.type.replace('_', ' ') }}
               </span>
             </div>
             <div class="flex items-center gap-4 mt-1.5 text-xs flex-wrap">
-              <span class="font-label font-bold text-[#475d92]">{{ formatValue(code) }}</span>
-              <span class="text-[#757681] font-body">{{ code.usedCount }}{{ code.maxUses ? `/${code.maxUses}` : '' }} uses</span>
-              <span v-if="code.expiresAt" class="text-[#757681] font-body">Expires: {{ formatDate(code.expiresAt) }}</span>
-              <span v-if="code.description" class="text-[#757681] font-body">{{ code.description }}</span>
+              <span class="font-label font-bold text-primary">{{ formatValue(code) }}</span>
+              <span class="text-on-surface-variant font-body">{{ code.usedCount }}{{ code.maxUses ? `/${code.maxUses}` : '' }} uses</span>
+              <span v-if="code.expiresAt" class="text-on-surface-variant font-body">Expires: {{ formatDate(code.expiresAt) }}</span>
+              <span v-if="code.description" class="text-on-surface-variant font-body">{{ code.description }}</span>
             </div>
           </div>
           <div class="flex items-center gap-1 shrink-0">
-            <button @click="openEdit(code)" class="w-8 h-8 flex items-center justify-center text-[#757681] hover:text-[#000622] hover:bg-[#edeeef] transition-colors">
+            <button @click="openEdit(code)" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors">
               <Edit class="w-3.5 h-3.5" />
             </button>
             <button @click="deleteCode(code.id)" class="w-8 h-8 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors">
@@ -180,31 +180,31 @@ const visiblePages = computed(() => {
       </div>
 
       <!-- Pagination -->
-      <div v-if="totalPages > 1" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-6 py-4 border-t border-[#c5c6d1]/20 bg-[#f8f9fa]">
-        <p class="text-xs font-body text-[#757681]">Showing {{ (currentPage - 1) * pageSize + 1 }}–{{ Math.min(currentPage * pageSize, filteredCodes.length) }} of {{ filteredCodes.length }} codes</p>
+      <div v-if="totalPages > 1" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-6 py-4 border-t border-outline-variant bg-surface-container-low">
+        <p class="text-xs font-body text-on-surface-variant">Showing {{ (currentPage - 1) * pageSize + 1 }}–{{ Math.min(currentPage * pageSize, filteredCodes.length) }} of {{ filteredCodes.length }} codes</p>
         <div class="flex items-center gap-1">
-          <button @click="currentPage--" :disabled="currentPage === 1" class="w-8 h-8 flex items-center justify-center border border-[#c5c6d1] text-[#757681] hover:bg-[#edeeef] disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-xs font-label font-bold">&lsaquo;</button>
+          <button @click="currentPage--" :disabled="currentPage === 1" class="w-8 h-8 flex items-center justify-center border border-outline-variant text-on-surface-variant hover:bg-surface-container-low disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-xs font-label font-bold">&lsaquo;</button>
           <template v-for="p in visiblePages" :key="String(p)">
-            <span v-if="p === '...'" class="w-8 h-8 flex items-center justify-center text-[#c5c6d1] text-xs">…</span>
-            <button v-else @click="currentPage = p" class="w-8 h-8 flex items-center justify-center border text-xs font-label font-bold transition-colors" :class="currentPage === p ? 'bg-[#000622] text-white border-[#000622]' : 'border-[#c5c6d1] text-[#757681] hover:bg-[#edeeef]'">{{ p }}</button>
+            <span v-if="p === '...'" class="w-8 h-8 flex items-center justify-center text-on-surface-variant text-xs">…</span>
+            <button v-else @click="currentPage = p" class="w-8 h-8 flex items-center justify-center border text-xs font-label font-bold transition-colors" :class="currentPage === p ? 'bg-primary text-white border-primary' : 'border-outline-variant text-on-surface-variant hover:bg-surface-container-low'">{{ p }}</button>
           </template>
-          <button @click="currentPage++" :disabled="currentPage === totalPages" class="w-8 h-8 flex items-center justify-center border border-[#c5c6d1] text-[#757681] hover:bg-[#edeeef] disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-xs font-label font-bold">&rsaquo;</button>
+          <button @click="currentPage++" :disabled="currentPage === totalPages" class="w-8 h-8 flex items-center justify-center border border-outline-variant text-on-surface-variant hover:bg-surface-container-low disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-xs font-label font-bold">&rsaquo;</button>
         </div>
       </div>
     </div>
 
     <!-- Create / Edit Dialog -->
     <Teleport to="body">
-      <div v-if="showDialog" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#000622]/40 backdrop-blur-sm">
-        <div class="w-full max-w-lg bg-white border border-[#c5c6d1]/20 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div v-if="showDialog" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40 backdrop-blur-sm">
+        <div class="w-full max-w-lg bg-surface-container-lowest border border-outline-variant shadow-2xl max-h-[90vh] overflow-y-auto">
 
           <!-- Modal Header -->
-          <div class="flex items-center justify-between px-6 py-5 border-b border-[#c5c6d1]/15">
+          <div class="flex items-center justify-between px-6 py-5 border-b border-outline-variant">
             <div>
-              <p class="text-[#475d92] font-label font-bold uppercase tracking-[0.2em] text-xs mb-0.5">Promotions</p>
-              <h3 class="font-headline font-bold text-[#000622] uppercase tracking-tight">{{ isEditing ? 'Edit' : 'Create' }} Code</h3>
+              <p class="text-primary font-label font-bold uppercase tracking-[0.2em] text-xs mb-0.5">Promotions</p>
+              <h3 class="font-headline font-bold text-on-surface uppercase tracking-tight">{{ isEditing ? 'Edit' : 'Create' }} Code</h3>
             </div>
-            <button @click="showDialog = false" class="w-8 h-8 flex items-center justify-center text-[#757681] hover:text-[#000622] hover:bg-[#edeeef] transition-colors">
+            <button @click="showDialog = false" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors">
               <X class="w-4 h-4" />
             </button>
           </div>
@@ -212,25 +212,25 @@ const visiblePages = computed(() => {
           <div class="p-6 space-y-5">
             <!-- Code -->
             <div class="space-y-2">
-              <label class="text-xs font-bold uppercase tracking-widest text-[#757681] font-label block">Code <span class="text-red-500">*</span></label>
+              <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label block">Code <span class="text-red-500">*</span></label>
               <input v-model="form.code" placeholder="e.g. SUMMER20" :disabled="isEditing"
-                class="w-full border border-[#c5c6d1] bg-[#f8f9fa] px-4 py-2.5 text-sm font-mono uppercase tracking-widest focus:outline-none focus:border-[#000622] transition-colors disabled:opacity-50" />
+                class="w-full border border-outline-variant bg-surface-container-low px-4 py-2.5 text-sm font-mono uppercase tracking-widest focus:outline-none focus:border-primary transition-colors disabled:opacity-50" />
             </div>
 
             <!-- Description -->
             <div class="space-y-2">
-              <label class="text-xs font-bold uppercase tracking-widest text-[#757681] font-label block">Description</label>
+              <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label block">Description</label>
               <input v-model="form.description" placeholder="Short description (optional)"
-                class="w-full border border-[#c5c6d1] bg-[#f8f9fa] px-4 py-2.5 text-sm font-body focus:outline-none focus:border-[#000622] transition-colors" />
+                class="w-full border border-outline-variant bg-surface-container-low px-4 py-2.5 text-sm font-body focus:outline-none focus:border-primary transition-colors" />
             </div>
 
             <!-- Type + Value -->
             <div class="grid grid-cols-2 gap-3">
               <div class="space-y-2">
-                <label class="text-xs font-bold uppercase tracking-widest text-[#757681] font-label block">Type <span class="text-red-500">*</span></label>
+                <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label block">Type <span class="text-red-500">*</span></label>
                 <ClientOnly>
                   <Select v-model="form.type">
-                    <SelectTrigger class="h-10 border-[#c5c6d1] text-xs font-label uppercase tracking-widest"><SelectValue /></SelectTrigger>
+                    <SelectTrigger class="h-10 border-outline-variant text-xs font-label uppercase tracking-widest"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="percentage">Percentage</SelectItem>
                       <SelectItem value="fixed">Fixed Amount</SelectItem>
@@ -240,66 +240,66 @@ const visiblePages = computed(() => {
                 </ClientOnly>
               </div>
               <div class="space-y-2">
-                <label class="text-xs font-bold uppercase tracking-widest text-[#757681] font-label block">
-                  Value <span class="text-[#c5c6d1] font-normal normal-case tracking-normal">{{ form.type === 'percentage' ? '(%)' : form.type === 'fixed' ? '(GHS)' : '' }}</span>
+                <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label block">
+                  Value <span class="text-on-surface-variant font-normal normal-case tracking-normal">{{ form.type === 'percentage' ? '(%)' : form.type === 'fixed' ? '(GHS)' : '' }}</span>
                 </label>
                 <input v-model.number="form.value" type="number" min="0" :max="form.type === 'percentage' ? 100 : undefined"
                   :disabled="form.type === 'free_shipping'"
-                  class="w-full border border-[#c5c6d1] bg-[#f8f9fa] px-4 py-2.5 text-sm font-body focus:outline-none focus:border-[#000622] transition-colors disabled:opacity-50" />
+                  class="w-full border border-outline-variant bg-surface-container-low px-4 py-2.5 text-sm font-body focus:outline-none focus:border-primary transition-colors disabled:opacity-50" />
               </div>
             </div>
 
-            <div class="border-t border-[#c5c6d1]/20 pt-5">
-              <p class="text-xs font-bold uppercase tracking-widest text-[#000622] font-label mb-4">Restrictions <span class="text-[#c5c6d1] font-normal normal-case tracking-normal">(optional)</span></p>
+            <div class="border-t border-outline-variant pt-5">
+              <p class="text-xs font-bold uppercase tracking-widest text-on-surface font-label mb-4">Restrictions <span class="text-on-surface-variant font-normal normal-case tracking-normal">(optional)</span></p>
               <div class="grid grid-cols-2 gap-3">
                 <div class="space-y-1.5">
-                  <label class="text-xs font-body text-[#757681] block">Min Order (GHS)</label>
+                  <label class="text-xs font-body text-on-surface-variant block">Min Order (GHS)</label>
                   <input v-model.number="form.minOrderAmount" type="number" min="0" placeholder="None"
-                    class="w-full border border-[#c5c6d1] bg-[#f8f9fa] px-3 py-2 text-sm font-body focus:outline-none focus:border-[#000622] transition-colors" />
+                    class="w-full border border-outline-variant bg-surface-container-low px-3 py-2 text-sm font-body focus:outline-none focus:border-primary transition-colors" />
                 </div>
                 <div class="space-y-1.5">
-                  <label class="text-xs font-body text-[#757681] block">Min Quantity</label>
+                  <label class="text-xs font-body text-on-surface-variant block">Min Quantity</label>
                   <input v-model.number="form.minQuantity" type="number" min="0" placeholder="None"
-                    class="w-full border border-[#c5c6d1] bg-[#f8f9fa] px-3 py-2 text-sm font-body focus:outline-none focus:border-[#000622] transition-colors" />
+                    class="w-full border border-outline-variant bg-surface-container-low px-3 py-2 text-sm font-body focus:outline-none focus:border-primary transition-colors" />
                 </div>
                 <div class="space-y-1.5">
-                  <label class="text-xs font-body text-[#757681] block">Max Uses</label>
+                  <label class="text-xs font-body text-on-surface-variant block">Max Uses</label>
                   <input v-model.number="form.maxUses" type="number" min="1" placeholder="Unlimited"
-                    class="w-full border border-[#c5c6d1] bg-[#f8f9fa] px-3 py-2 text-sm font-body focus:outline-none focus:border-[#000622] transition-colors" />
+                    class="w-full border border-outline-variant bg-surface-container-low px-3 py-2 text-sm font-body focus:outline-none focus:border-primary transition-colors" />
                 </div>
                 <div class="space-y-1.5">
-                  <label class="text-xs font-body text-[#757681] block">Category</label>
+                  <label class="text-xs font-body text-on-surface-variant block">Category</label>
                   <input v-model="form.categoryName" placeholder="e.g. drinkware"
-                    class="w-full border border-[#c5c6d1] bg-[#f8f9fa] px-3 py-2 text-sm font-body focus:outline-none focus:border-[#000622] transition-colors" />
+                    class="w-full border border-outline-variant bg-surface-container-low px-3 py-2 text-sm font-body focus:outline-none focus:border-primary transition-colors" />
                 </div>
               </div>
             </div>
 
-            <div class="border-t border-[#c5c6d1]/20 pt-5">
-              <p class="text-xs font-bold uppercase tracking-widest text-[#000622] font-label mb-4">Validity Period <span class="text-[#c5c6d1] font-normal normal-case tracking-normal">(optional)</span></p>
+            <div class="border-t border-outline-variant pt-5">
+              <p class="text-xs font-bold uppercase tracking-widest text-on-surface font-label mb-4">Validity Period <span class="text-on-surface-variant font-normal normal-case tracking-normal">(optional)</span></p>
               <div class="grid grid-cols-2 gap-3">
                 <div class="space-y-1.5">
-                  <label class="text-xs font-body text-[#757681] block">Starts At</label>
-                  <input v-model="form.startsAt" type="datetime-local" class="w-full border border-[#c5c6d1] bg-[#f8f9fa] px-3 py-2 text-sm font-body focus:outline-none focus:border-[#000622] transition-colors" />
+                  <label class="text-xs font-body text-on-surface-variant block">Starts At</label>
+                  <input v-model="form.startsAt" type="datetime-local" class="w-full border border-outline-variant bg-surface-container-low px-3 py-2 text-sm font-body focus:outline-none focus:border-primary transition-colors" />
                 </div>
                 <div class="space-y-1.5">
-                  <label class="text-xs font-body text-[#757681] block">Expires At</label>
-                  <input v-model="form.expiresAt" type="datetime-local" class="w-full border border-[#c5c6d1] bg-[#f8f9fa] px-3 py-2 text-sm font-body focus:outline-none focus:border-[#000622] transition-colors" />
+                  <label class="text-xs font-body text-on-surface-variant block">Expires At</label>
+                  <input v-model="form.expiresAt" type="datetime-local" class="w-full border border-outline-variant bg-surface-container-low px-3 py-2 text-sm font-body focus:outline-none focus:border-primary transition-colors" />
                 </div>
               </div>
             </div>
 
-            <div class="border-t border-[#c5c6d1]/20 pt-5 flex items-center justify-between">
+            <div class="border-t border-outline-variant pt-5 flex items-center justify-between">
               <div>
-                <p class="text-xs font-bold uppercase tracking-widest text-[#000622] font-label">Active</p>
-                <p class="text-xs text-[#757681] font-body mt-0.5">Show this code to customers</p>
+                <p class="text-xs font-bold uppercase tracking-widest text-on-surface font-label">Active</p>
+                <p class="text-xs text-on-surface-variant font-body mt-0.5">Show this code to customers</p>
               </div>
               <Switch v-model="form.isActive" />
             </div>
 
             <!-- Actions -->
             <div class="flex gap-3 pt-2">
-              <button @click="showDialog = false" class="flex-1 py-3 border border-[#c5c6d1] text-[#000622] font-label font-bold uppercase text-xs tracking-widest hover:bg-[#edeeef] transition-colors">
+              <button @click="showDialog = false" class="flex-1 py-3 border border-outline-variant text-on-surface font-label font-bold uppercase text-xs tracking-widest hover:bg-surface-container-low transition-colors">
                 Cancel
               </button>
               <button @click="saveCode" :disabled="isSaving" class="flex-1 py-3 monolith-gradient text-white font-label font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-2 disabled:opacity-60">

@@ -47,29 +47,29 @@ onMounted(() => {
   <div class="flex flex-col monolith-axis">
     <!-- Series Label + Name -->
     <header class="mb-10">
-      <span class="font-label uppercase text-[#475d92] tracking-[0.2em] text-xs font-bold mb-4 block">
+      <span class="font-label uppercase text-primary tracking-[0.2em] text-xs font-bold mb-4 block">
         The Monolith Series
       </span>
-      <h1 class="font-headline font-black tracking-tighter leading-none text-[#000622] mb-6 uppercase" style="font-size: clamp(2rem, 4vw, 3.5rem)">
+      <h1 class="font-headline font-black tracking-tighter leading-none text-on-surface mb-6 uppercase" style="font-size: clamp(2rem, 4vw, 3.5rem)">
         {{ product.name }}
       </h1>
-      <p class="text-[#454650] text-lg leading-relaxed max-w-md font-body">
+      <p class="text-on-surface-variant text-lg leading-relaxed max-w-md font-body">
         {{ product.description }}
       </p>
     </header>
 
     <!-- Eco-stat chips -->
     <div class="flex flex-wrap gap-3 mb-10">
-      <span class="px-4 py-1.5 rounded-full bg-[#adc3fe] text-[#394f83] text-xs font-bold font-label uppercase tracking-wide">BPA-Free Shell</span>
-      <span v-if="product.specInsulation" class="px-4 py-1.5 rounded-full bg-[#adc3fe] text-[#394f83] text-xs font-bold font-label uppercase tracking-wide">
+      <span class="px-4 py-1.5 rounded-full bg-[#adc3fe] text-primary text-xs font-bold font-label uppercase tracking-wide">BPA-Free Shell</span>
+      <span v-if="product.specInsulation" class="px-4 py-1.5 rounded-full bg-[#adc3fe] text-primary text-xs font-bold font-label uppercase tracking-wide">
         {{ product.specInsulation }}
       </span>
-      <span class="px-4 py-1.5 rounded-full bg-[#adc3fe] text-[#394f83] text-xs font-bold font-label uppercase tracking-wide">Lifetime Guarantee</span>
+      <span class="px-4 py-1.5 rounded-full bg-[#adc3fe] text-primary text-xs font-bold font-label uppercase tracking-wide">Lifetime Guarantee</span>
     </div>
 
     <!-- Volume Selector -->
-    <div v-if="volumeOptions.length > 0" class="space-y-4 mb-8 pb-6 border-b border-[#c5c6d1]/30">
-      <span class="font-label text-xs uppercase text-[#757681] tracking-widest block">Volume</span>
+    <div v-if="volumeOptions.length > 0" class="space-y-4 mb-8 pb-6 border-b border-outline-variant">
+      <span class="font-label text-xs uppercase text-on-surface-variant tracking-widest block">Volume</span>
       <div class="flex gap-4 flex-wrap">
         <button
           v-for="vol in volumeOptions"
@@ -77,8 +77,8 @@ onMounted(() => {
           @click="selectedVolume = vol"
           class="px-6 py-2 border text-sm font-bold font-label uppercase tracking-wide transition-colors"
           :class="selectedVolume === vol
-            ? 'border-[#000622] bg-[#000622] text-white'
-            : 'border-[#c5c6d1] text-[#454650] hover:border-[#000622]'"
+            ? 'border-primary bg-primary text-white'
+            : 'border-outline-variant text-on-surface-variant hover:border-primary'"
         >
           {{ vol }}
         </button>
@@ -86,46 +86,46 @@ onMounted(() => {
     </div>
 
     <!-- Technical Specs -->
-    <div class="mb-10 pb-6 border-b border-[#c5c6d1]/30">
-      <span class="font-label text-xs uppercase text-[#757681] tracking-widest block mb-4">Technical Specs</span>
-      <ul class="space-y-3 font-label text-sm text-[#454650]">
+    <div class="mb-10 pb-6 border-b border-outline-variant">
+      <span class="font-label text-xs uppercase text-on-surface-variant tracking-widest block mb-4">Technical Specs</span>
+      <ul class="space-y-3 font-label text-sm text-on-surface-variant">
         <li v-if="product.specMaterial" class="flex justify-between">
           <span>Material</span>
-          <span class="text-[#000622] font-bold">{{ product.specMaterial }}</span>
+          <span class="text-on-surface font-bold">{{ product.specMaterial }}</span>
         </li>
         <li v-if="product.specCapacity" class="flex justify-between">
           <span>Capacity</span>
-          <span class="text-[#000622] font-bold">{{ product.specCapacity }}</span>
+          <span class="text-on-surface font-bold">{{ product.specCapacity }}</span>
         </li>
         <li v-if="product.specWeight" class="flex justify-between">
           <span>Weight</span>
-          <span class="text-[#000622] font-bold">{{ product.specWeight }}</span>
+          <span class="text-on-surface font-bold">{{ product.specWeight }}</span>
         </li>
         <li v-if="product.specDimensions" class="flex justify-between">
           <span>Dimensions</span>
-          <span class="text-[#000622] font-bold">{{ product.specDimensions }}</span>
+          <span class="text-on-surface font-bold">{{ product.specDimensions }}</span>
         </li>
         <li v-if="product.specTempRetention" class="flex justify-between">
           <span>Temp Retention</span>
-          <span class="text-[#000622] font-bold">{{ product.specTempRetention }}</span>
+          <span class="text-on-surface font-bold">{{ product.specTempRetention }}</span>
         </li>
       </ul>
     </div>
 
     <!-- Quantity -->
     <div v-if="inStock" class="flex items-center gap-4 mb-8">
-      <span class="font-label text-xs uppercase text-[#757681] tracking-widest">Qty</span>
-      <div class="flex items-center border border-[#c5c6d1]/50">
+      <span class="font-label text-xs uppercase text-on-surface-variant tracking-widest">Qty</span>
+      <div class="flex items-center border border-outline-variant/50">
         <button
           @click="quantity = Math.max(1, quantity - 1)"
-          class="px-4 py-2 text-[#000622] hover:bg-[#edeeef] transition-colors"
+          class="px-4 py-2 text-on-surface hover:bg-surface-container-low transition-colors"
         >
           <Minus class="w-4 h-4" />
         </button>
-        <span class="px-6 font-bold text-sm font-label text-[#000622]">{{ String(quantity).padStart(2, '0') }}</span>
+        <span class="px-6 font-bold text-sm font-label text-on-surface">{{ String(quantity).padStart(2, '0') }}</span>
         <button
           @click="quantity = Math.min(product.inventoryCount, quantity + 1)"
-          class="px-4 py-2 text-[#000622] hover:bg-[#edeeef] transition-colors"
+          class="px-4 py-2 text-on-surface hover:bg-surface-container-low transition-colors"
         >
           <Plus class="w-4 h-4" />
         </button>
@@ -143,7 +143,7 @@ onMounted(() => {
 
     <!-- Pricing -->
     <div class="flex items-baseline gap-4 mb-6">
-      <span class="font-headline font-black text-[#000622] tracking-tighter" style="font-size: 2.5rem">
+      <span class="font-headline font-black text-on-surface tracking-tighter" style="font-size: 2.5rem">
         {{ formatPrice(product.price) }}
       </span>
     </div>
@@ -153,29 +153,29 @@ onMounted(() => {
       @click="handleAddToCart"
       :disabled="addedToCart || !inStock"
       class="w-full py-6 font-label font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
-      :class="!inStock ? 'bg-[#edeeef] text-[#757681] cursor-not-allowed' : addedToCart ? 'bg-emerald-600 text-white' : 'monolith-gradient text-white hover:opacity-90'"
+      :class="!inStock ? 'bg-surface-container-low text-on-surface-variant cursor-not-allowed' : addedToCart ? 'bg-primary text-white' : 'monolith-gradient text-white hover:opacity-90'"
     >
       <Check v-if="addedToCart" class="w-5 h-5" />
       <span>{{ !inStock ? 'Out of Stock' : addedToCart ? 'Added to Cart!' : 'Add to Cart' }}</span>
       <span v-if="!addedToCart && inStock" class="material-symbols-outlined text-lg">arrow_forward</span>
     </button>
 
-    <p class="mt-6 text-center text-xs text-[#757681] font-label uppercase tracking-tighter">
+    <p class="mt-6 text-center text-xs text-on-surface-variant font-label uppercase tracking-tighter">
       Free express shipping on orders over GHS 100
     </p>
 
     <!-- Trust badges -->
-    <div class="mt-8 pt-6 border-t border-[#c5c6d1]/30 space-y-3">
-      <div class="flex items-center gap-3 text-xs font-body text-[#454650]">
-        <span class="material-symbols-outlined text-[#475d92] text-lg">local_shipping</span>
+    <div class="mt-8 pt-6 border-t border-outline-variant space-y-3">
+      <div class="flex items-center gap-3 text-xs font-body text-on-surface-variant">
+        <span class="material-symbols-outlined text-primary text-lg">local_shipping</span>
         Free delivery in Ghana
       </div>
-      <div class="flex items-center gap-3 text-xs font-body text-[#454650]">
-        <span class="material-symbols-outlined text-[#475d92] text-lg">verified</span>
+      <div class="flex items-center gap-3 text-xs font-body text-on-surface-variant">
+        <span class="material-symbols-outlined text-primary text-lg">verified</span>
         30-day return policy
       </div>
-      <div class="flex items-center gap-3 text-xs font-body text-[#454650]">
-        <span class="material-symbols-outlined text-[#475d92] text-lg">lock</span>
+      <div class="flex items-center gap-3 text-xs font-body text-on-surface-variant">
+        <span class="material-symbols-outlined text-primary text-lg">lock</span>
         Secure payments via Paystack
         <NuxtImg src="/img/paystack-logo.png" alt="Paystack" class="h-4 w-auto" />
       </div>

@@ -52,7 +52,7 @@ useSeoMeta({
         <!-- Contact Info -->
         <div class="space-y-12">
           <div>
-            <h2 class="font-headline font-bold text-2xl text-on-surface mb-6">How can we help?</h2>
+            <h2 class="font-headline font-bold text-on-surfacexl text-on-surface mb-6">How can we help?</h2>
             <p class="text-on-surface-variant font-body leading-relaxed">
               Our team is here to answer your questions about orders, products, shipping, or anything else on your mind. We typically respond within 24 hours.
             </p>
@@ -92,12 +92,12 @@ useSeoMeta({
         <!-- Contact Form -->
         <div class="bg-surface-container-lowest border border-outline-variant/10 rounded-xl p-8 md:p-10">
           <div v-if="submitted" class="text-center py-12">
-            <div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle2 class="w-8 h-8 text-emerald-600" />
+            <div class="w-16 h-16 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 class="w-8 h-8 text-primary" />
             </div>
-            <h3 class="font-headline font-bold text-2xl text-on-surface mb-2">Message Sent</h3>
+            <h3 class="font-headline font-bold text-on-surfacexl text-on-surface mb-2">Message Sent</h3>
             <p class="text-on-surface-variant font-body mb-6">Thank you for reaching out. We'll get back to you soon.</p>
-            <button @click="submitted = false" class="px-6 py-3 bg-[#000622] text-white font-label font-bold uppercase text-xs tracking-widest hover:opacity-90 transition-opacity">
+            <button @click="submitted = false" class="px-6 py-3 bg-primary text-white font-label font-bold uppercase text-xs tracking-widest hover:opacity-90 transition-opacity">
               Send Another
             </button>
           </div>
@@ -107,32 +107,32 @@ useSeoMeta({
               <div class="space-y-2">
                 <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label block">Name</label>
                 <input v-model="name" v-bind="nameAttrs" type="text" placeholder="Your name"
-                  class="w-full bg-surface-container-low rounded-sm border-0 py-3 px-4 text-sm font-body focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant" />
+                  class="w-full bg-surface-container-low rounded-sm border-primary py-3 px-4 text-sm font-body focus:ring-primary focus:ring-primary/20 transition-all placeholder:text-outline-variant" />
                 <p v-if="errors.name" class="text-xs text-red-600 font-body">{{ errors.name }}</p>
               </div>
               <div class="space-y-2">
                 <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label block">Email</label>
                 <input v-model="email" v-bind="emailAttrs" type="email" placeholder="your@email.com"
-                  class="w-full bg-surface-container-low rounded-sm border-0 py-3 px-4 text-sm font-body focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant" />
+                  class="w-full bg-surface-container-low rounded-sm border-primary py-3 px-4 text-sm font-body focus:ring-primary focus:ring-primary/20 transition-all placeholder:text-outline-variant" />
                 <p v-if="errors.email" class="text-xs text-red-600 font-body">{{ errors.email }}</p>
               </div>
             </div>
             <div class="space-y-2">
               <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label block">Subject</label>
               <input v-model="subject" v-bind="subjectAttrs" type="text" placeholder="How can we help?"
-                class="w-full bg-surface-container-low rounded-sm border-0 py-3 px-4 text-sm font-body focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant" />
+                class="w-full bg-surface-container-low rounded-sm border-primary py-3 px-4 text-sm font-body focus:ring-primary focus:ring-primary/20 transition-all placeholder:text-outline-variant" />
               <p v-if="errors.subject" class="text-xs text-red-600 font-body">{{ errors.subject }}</p>
             </div>
             <div class="space-y-2">
               <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label block">Message</label>
               <textarea v-model="message" v-bind="messageAttrs" rows="5" placeholder="Tell us more..."
-                class="w-full bg-surface-container-low rounded-sm border-0 py-3 px-4 text-sm font-body focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant resize-none"></textarea>
+                class="w-full bg-surface-container-low rounded-sm border-primary py-3 px-4 text-sm font-body focus:ring-primary focus:ring-primary/20 transition-all placeholder:text-outline-variant resize-none"></textarea>
               <p v-if="errors.message" class="text-xs text-red-600 font-body">{{ errors.message }}</p>
             </div>
             <button type="submit" :disabled="isSubmitting"
               class="w-full py-4 rounded-md font-label font-bold uppercase tracking-widest text-sm btn-primary flex items-center justify-center gap-3 disabled:opacity-60">
               <Send v-if="!isSubmitting" class="w-4 h-4" />
-              <div v-else class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <div v-else class="w-4 h-4 border-primary border-white/30 border-t-white rounded-full animate-spin" />
               {{ isSubmitting ? 'Sending...' : 'Send Message' }}
             </button>
           </form>

@@ -61,14 +61,14 @@ const onSubmit = handleSubmit(async (values) => {
           <div class="space-y-2">
             <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label block">Full Name</label>
             <input v-model="name" v-bind="nameAttrs" type="text" placeholder="Henry Asante"
-              class="w-full bg-surface-container-low rounded-sm border-0 py-3 px-4 text-sm font-body focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant" />
+              class="w-full bg-surface-container-low rounded-sm border-primary py-3 px-4 text-sm font-body focus:ring-primary focus:ring-primary/20 transition-all placeholder:text-outline-variant" />
             <p v-if="errors.name" class="text-xs text-red-600 font-body">{{ errors.name }}</p>
           </div>
 
           <div class="space-y-2">
             <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label block">Email Address</label>
             <input v-model="email" v-bind="emailAttrs" type="email" placeholder="henry@culinaryheritage.com"
-              class="w-full bg-surface-container-low rounded-sm border-0 py-3 px-4 text-sm font-body focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant" />
+              class="w-full bg-surface-container-low rounded-sm border-primary py-3 px-4 text-sm font-body focus:ring-primary focus:ring-primary/20 transition-all placeholder:text-outline-variant" />
             <p v-if="errors.email" class="text-xs text-red-600 font-body">{{ errors.email }}</p>
           </div>
 
@@ -76,7 +76,7 @@ const onSubmit = handleSubmit(async (values) => {
             <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label block">Password</label>
             <div class="relative">
               <input v-model="password" v-bind="passwordAttrs" :type="showPassword ? 'text' : 'password'" placeholder="••••••••"
-                class="w-full bg-surface-container-low rounded-sm border-0 py-3 px-4 pr-10 text-sm font-body focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant text-on-surface" />
+                class="w-full bg-surface-container-low rounded-sm border-primary py-3 px-4 pr-10 text-sm font-body focus:ring-primary focus:ring-primary/20 transition-all placeholder:text-outline-variant text-on-surface" />
               <button type="button" @click="showPassword = !showPassword"
                 class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors">
                 <EyeOff v-if="showPassword" class="w-4 h-4" />
@@ -88,7 +88,7 @@ const onSubmit = handleSubmit(async (values) => {
 
           <button type="submit" :disabled="isSubmitting"
             class="w-full py-4 rounded-md font-label font-bold uppercase tracking-widest text-sm btn-primary flex items-center justify-center gap-3 disabled:opacity-60">
-            <div v-if="isSubmitting" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div v-if="isSubmitting" class="w-4 h-4 border-primary border-white/30 border-t-white rounded-full animate-spin" />
             {{ isSubmitting ? 'Creating Account...' : 'Create Account' }}
           </button>
 

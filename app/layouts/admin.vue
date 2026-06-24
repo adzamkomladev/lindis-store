@@ -4,7 +4,7 @@ import AdminHeader from '~/components/admin/AdminHeader.vue'
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#f8f9fa]">
+  <div class="min-h-screen bg-surface">
     <!-- Sidebar: Fixed on desktop -->
     <AdminSidebar />
 

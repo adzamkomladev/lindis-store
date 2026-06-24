@@ -61,12 +61,12 @@ const hasActiveFilters = computed(() => {
   <div class="space-y-6">
     <!-- Header -->
     <div class="flex items-center justify-between">
-      <h3 class="font-semibold text-stone-900">Filters</h3>
+      <h3 class="font-semibold text-on-surface">Filters</h3>
       <Button 
         v-if="hasActiveFilters"
         variant="ghost" 
         size="sm" 
-        class="text-stone-500 hover:text-stone-900 h-8 px-2"
+        class="text-on-surface-variant hover:text-on-surface h-8 px-2"
         @click="clearFilters"
       >
         <X class="w-4 h-4 mr-1" />
@@ -75,12 +75,12 @@ const hasActiveFilters = computed(() => {
     </div>
 
     <!-- Category Filter -->
-    <div class="border-t border-stone-100 pt-4">
+    <div class="border-t border-outline-variant pt-4">
       <button 
         class="flex items-center justify-between w-full text-left"
         @click="isCategoryOpen = !isCategoryOpen"
       >
-        <span class="font-medium text-sm text-stone-900">Category</span>
+        <span class="font-medium text-sm text-on-surface">Category</span>
         <ChevronUp v-if="isCategoryOpen" class="w-4 h-4 text-stone-400" />
         <ChevronDown v-else class="w-4 h-4 text-stone-400" />
       </button>
@@ -94,7 +94,7 @@ const hasActiveFilters = computed(() => {
             'w-full text-left px-3 py-2 rounded-lg text-sm transition-colors',
             selectedCategory === category 
               ? 'bg-stone-900 text-white' 
-              : 'bg-stone-50 text-stone-600 hover:bg-stone-100'
+              : 'bg-surface-container-low text-stone-600 hover:bg-surface-container-low'
           ]"
         >
           {{ category }}
@@ -103,12 +103,12 @@ const hasActiveFilters = computed(() => {
     </div>
 
     <!-- Price Filter -->
-    <div class="border-t border-stone-100 pt-4">
+    <div class="border-t border-outline-variant pt-4">
       <button 
         class="flex items-center justify-between w-full text-left"
         @click="isPriceOpen = !isPriceOpen"
       >
-        <span class="font-medium text-sm text-stone-900">Price Range</span>
+        <span class="font-medium text-sm text-on-surface">Price Range</span>
         <ChevronUp v-if="isPriceOpen" class="w-4 h-4 text-stone-400" />
         <ChevronDown v-else class="w-4 h-4 text-stone-400" />
       </button>

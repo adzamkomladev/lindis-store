@@ -22,7 +22,7 @@ const iconMap = {
 
 const iconColorMap = {
   default: 'text-blue-600 bg-blue-100',
-  success: 'text-emerald-600 bg-emerald-100',
+  success: 'text-primary bg-emerald-100',
   error: 'text-red-600 bg-red-100',
   warning: 'text-amber-600 bg-amber-100'
 }

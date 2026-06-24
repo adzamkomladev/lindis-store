@@ -18,9 +18,9 @@ const formatPrice = (amount: number) => {
     <div 
       v-for="item in items" 
       :key="item.id" 
-      class="flex gap-2.5 md:gap-4 p-2 md:p-3 bg-stone-50 md:bg-white rounded-lg md:rounded-xl border border-stone-100"
+      class="flex gap-2.5 md:gap-4 p-2 md:p-3 bg-surface-container-low md:bg-surface-container-lowest rounded-lg md:rounded-xl border border-outline-variant"
     >
-      <div class="h-12 w-12 md:h-16 md:w-16 bg-stone-100 md:bg-stone-50 rounded-md md:rounded-lg border border-stone-100 overflow-hidden shrink-0">
+      <div class="h-12 w-12 md:h-16 md:w-16 bg-surface-container-low md:bg-surface-container-low rounded-md md:rounded-lg border border-outline-variant overflow-hidden shrink-0">
         <NuxtImg 
           v-if="item.image"
           :src="item.image" 
@@ -29,10 +29,10 @@ const formatPrice = (amount: number) => {
         />
       </div>
       <div class="flex-1 min-w-0">
-        <p class="font-medium text-xs md:text-sm text-stone-900 truncate">{{ item.name }}</p>
-        <p class="text-xs text-stone-500">Qty: {{ item.quantity }}</p>
+        <p class="font-medium text-xs md:text-sm text-on-surface truncate">{{ item.name }}</p>
+        <p class="text-xs text-on-surface-variant">Qty: {{ item.quantity }}</p>
       </div>
-      <p class="font-semibold text-xs md:text-sm text-stone-900 whitespace-nowrap self-center">
+      <p class="font-semibold text-xs md:text-sm text-on-surface whitespace-nowrap self-center">
         {{ formatPrice(item.price * item.quantity) }}
       </p>
     </div>

@@ -20,38 +20,38 @@ const remainingForFreeShipping = computed(() => Math.max(0, freeShippingThreshol
 </script>
 
 <template>
-  <div class="bg-[#f3f4f5] p-8 md:p-10 sticky top-32">
-    <h2 class="font-headline font-bold text-[#000622] mb-8 tracking-tight" style="font-size: 1.5rem">Order Summary</h2>
+  <div class="bg-surface-container-low p-8 md:p-10 sticky top-32">
+    <h2 class="font-headline font-bold text-on-surface mb-8 tracking-tight" style="font-size: 1.5rem">Order Summary</h2>
 
     <!-- Free shipping banner -->
-    <div v-if="!hasFreeShipping" class="mb-6 text-xs font-label font-bold uppercase tracking-widest text-[#475d92]">
+    <div v-if="!hasFreeShipping" class="mb-6 text-xs font-label font-bold uppercase tracking-widest text-primary">
       Add {{ formatPrice(remainingForFreeShipping) }} for free shipping
     </div>
-    <div v-else class="mb-6 text-xs font-label font-bold uppercase tracking-widest text-emerald-600">
+    <div v-else class="mb-6 text-xs font-label font-bold uppercase tracking-widest text-primary">
       ✓ Free shipping unlocked
     </div>
 
     <!-- Line items -->
     <div class="space-y-5">
       <div class="flex justify-between text-sm font-body">
-        <span class="text-[#454650]">Subtotal</span>
-        <span class="font-bold text-[#000622]">{{ formatPrice(subtotal) }}</span>
+        <span class="text-on-surface-variant">Subtotal</span>
+        <span class="font-bold text-on-surface">{{ formatPrice(subtotal) }}</span>
       </div>
       <div class="flex justify-between text-sm font-body">
-        <span class="text-[#454650]">Estimated Shipping</span>
-        <span class="font-bold text-[#000622]">{{ hasFreeShipping ? 'FREE' : formatPrice(1500) }}</span>
+        <span class="text-on-surface-variant">Estimated Shipping</span>
+        <span class="font-bold text-on-surface">{{ hasFreeShipping ? 'FREE' : formatPrice(1500) }}</span>
       </div>
       <div class="flex justify-between text-sm font-body">
-        <span class="text-[#454650]">Tax</span>
-        <span class="font-bold text-[#000622]">{{ formatPrice(0) }}</span>
+        <span class="text-on-surface-variant">Tax</span>
+        <span class="font-bold text-on-surface">{{ formatPrice(0) }}</span>
       </div>
 
       <!-- Divider + Total -->
-      <div class="pt-5 border-t border-[#c5c6d1]/30 flex justify-between items-end">
-        <span class="font-headline font-bold text-[#000622] text-lg">Total</span>
+      <div class="pt-5 border-t border-outline-variant flex justify-between items-end">
+        <span class="font-headline font-bold text-on-surface text-lg">Total</span>
         <div class="text-right">
-          <span class="block text-[10px] text-[#454650] uppercase font-bold tracking-widest font-label">GHS</span>
-          <span class="font-headline font-black text-[#000622] tracking-tighter" style="font-size: 2rem">
+          <span class="block text-[10px] text-on-surface-variant uppercase font-bold tracking-widest font-label">GHS</span>
+          <span class="font-headline font-black text-on-surface tracking-tighter" style="font-size: 2rem">
             {{ formatPrice(subtotal) }}
           </span>
         </div>
@@ -74,15 +74,15 @@ const remainingForFreeShipping = computed(() => Math.max(0, freeShippingThreshol
     <!-- Trust badges -->
     <div class="mt-8 space-y-4">
       <div class="flex items-start gap-3">
-        <span class="material-symbols-outlined text-[#475d92] text-xl">verified</span>
-        <p class="text-[11px] leading-relaxed text-[#454650] font-body">Engineered for endurance. Every Effero product comes with a lifetime performance guarantee.</p>
+        <span class="material-symbols-outlined text-primary text-xl">verified</span>
+        <p class="text-[11px] leading-relaxed text-on-surface-variant font-body">Engineered for endurance. Every Effero product comes with a lifetime performance guarantee.</p>
       </div>
       <div class="flex items-start gap-3">
-        <span class="material-symbols-outlined text-[#475d92] text-xl">local_shipping</span>
-        <p class="text-[11px] leading-relaxed text-[#454650] font-body">Free delivery in Ghana. Secure nationwide logistics.</p>
+        <span class="material-symbols-outlined text-primary text-xl">local_shipping</span>
+        <p class="text-[11px] leading-relaxed text-on-surface-variant font-body">Free delivery in Ghana. Secure nationwide logistics.</p>
       </div>
       <div class="flex items-center gap-3">
-        <span class="material-symbols-outlined text-[#475d92] text-xl">lock</span>
+        <span class="material-symbols-outlined text-primary text-xl">lock</span>
         <div class="flex items-center gap-2">
           <NuxtImg src="/img/paystack-logo.png" alt="Paystack" class="h-5 w-auto" />
         </div>

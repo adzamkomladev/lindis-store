@@ -16,7 +16,7 @@ defineProps<{
 </script>
 
 <template>
-  <Card class="border-0 shadow-md">
+  <Card class="border-primary shadow-md">
     <CardContent class="p-3 md:p-4">
       <div class="flex items-center gap-2 md:gap-3">
         <div 
@@ -34,7 +34,7 @@ defineProps<{
           <div v-if="loading" class="h-6 md:h-8 w-16 md:w-24">
             <Skeleton class="h-6 md:h-8 w-full" />
           </div>
-          <p v-else class="text-lg md:text-2xl font-bold text-foreground">{{ value }}</p>
+          <p v-else class="text-lg md:text-on-surfacexl font-bold text-foreground">{{ value }}</p>
           <p class="text-[10px] md:text-xs text-muted-foreground truncate">{{ title }}</p>
         </div>
       </div>
@@ -44,7 +44,7 @@ defineProps<{
         <span 
           :class="[
             'inline-flex items-center text-[10px] md:text-xs font-medium px-1.5 md:px-2 py-0.5 rounded-full',
-            changeType === 'positive' ? 'bg-emerald-50 text-emerald-600' :
+            changeType === 'positive' ? 'bg-primary/5 text-primary' :
             changeType === 'negative' ? 'bg-destructive/10 text-destructive' :
             'bg-muted text-muted-foreground'
           ]"

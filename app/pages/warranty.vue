@@ -12,13 +12,13 @@ useSeoMeta({
     </section>
     <div class="px-8 max-w-3xl mx-auto py-16 pb-24 space-y-12">
       <div>
-        <h2 class="font-headline font-bold text-2xl text-on-surface mb-4">Our Promise</h2>
+        <h2 class="font-headline font-bold text-on-surfacexl text-on-surface mb-4">Our Promise</h2>
         <p class="text-on-surface-variant font-body leading-relaxed mb-4">
           At Lindi's Store, we stand behind the quality of every product we sell. All items come with a standard manufacturer's warranty and our own satisfaction guarantee.
         </p>
       </div>
       <div>
-        <h2 class="font-headline font-bold text-2xl text-on-surface mb-4">Standard Warranty</h2>
+        <h2 class="font-headline font-bold text-on-surfacexl text-on-surface mb-4">Standard Warranty</h2>
         <ul class="list-disc list-inside text-on-surface-variant font-body space-y-2">
           <li>Kitchen appliances: 12 months from date of purchase</li>
           <li>Cookware & bakeware: 6 months against manufacturing defects</li>
@@ -27,7 +27,7 @@ useSeoMeta({
         </ul>
       </div>
       <div>
-        <h2 class="font-headline font-bold text-2xl text-on-surface mb-4">What's Covered</h2>
+        <h2 class="font-headline font-bold text-on-surfacexl text-on-surface mb-4">What's Covered</h2>
         <p class="text-on-surface-variant font-body leading-relaxed">
           Manufacturing defects, faulty materials, and workmanship issues. Warranty does not cover normal wear and tear, misuse, accidental damage, or unauthorized modifications.
         </p>
