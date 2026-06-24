@@ -1,4 +1,8 @@
 import { setup } from 'rivetkit'
+import { readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
+import { pathToFileURL } from 'node:url'
+import { resolve as resolvePath } from 'node:path'
 import { catalogActor } from './actors/catalog-actor'
 import { inventoryActor } from './actors/inventory-actor'
 import { cartActor } from './actors/cart-actor'
@@ -10,33 +14,60 @@ import { analyticsActor } from './actors/analytics-actor'
 import { settingsActor } from './actors/settings-actor'
 
 /**
- * Maps RIVET_RUNNER_VERSION → RIVET_ENVOY_VERSION so the envoy config
- * picks it up. The SDK reads RIVET_ENVOY_VERSION for drain-on-upgrade
- * versioning; RIVET_RUNNER_VERSION is the documented user-facing alias.
- *
- * Must run before setup() evaluates the config. Bump RIVET_RUNNER_VERSION
- * on each deploy so the engine drains stale envoys.
- *
- * The value must be "envoy" or "serverless" for the SDK to accept it.
- * If RIVET_RUNNER_VERSION is set to something like "2" or "2.3.2", we
- * treat it as a deploy counter and pass through "envoy" (the Runtime
- * mode name) to RIVET_ENVOY_VERSION instead. The versioning is handled
- * by the engine via the runner_key + deploy drain logic, not by the
- * env var value itself.
- *
- * @see https://rivet.dev/docs/actors/versions
+ * We always connect to an existing Rivet Engine endpoint (serverless), never
+ * spawn a local engine binary. RivetKit's buildServeConfig() auto-discovers
+ * the @rivetkit/engine-cli binary and adds it to the serve config as
+ * `engineBinaryPath`. The WASM runtime then rejects that field because it
+ * cannot spawn a binary. Pointing RIVET_ENGINE_BINARY at a non-existent path
+ * makes engine-cli throw, so buildServeConfig() skips the field.
  */
-function ensureRivetEnvoyVersion(): void {
-  if (process.env.RIVET_ENVOY_VERSION) return
-  if (process.env.RIVET_RUNNER_VERSION) {
-    // The SDK only accepts "envoy" or "serverless" for RIVET_ENVOY_VERSION.
-    // RIVET_RUNNER_VERSION is our deploy counter (e.g. "2") — don't pass it
-    // through; use "envoy" which tells the SDK we're in runner mode.
-    process.env.RIVET_ENVOY_VERSION = 'envoy'
-  }
+if (!process.env.RIVET_ENGINE_BINARY) {
+  process.env.RIVET_ENGINE_BINARY = '/dev/null/rivet-engine-binary-disabled'
 }
 
-ensureRivetEnvoyVersion()
+/**
+ * Provide the WASM runtime binary bytes directly so RivetKit never tries to
+ * `fetch()` the .wasm file from a file:// or bundled import.meta.url.
+ * Bun on Windows cannot load the optional @rivetkit/rivetkit-napi binary, so
+ * it falls back to WASM. Passing initInput avoids the brittle fetch step both
+ * in `bun run dev` and in the built node-server output.
+ */
+function getWasmInitInput(): Uint8Array | undefined {
+  const candidates: string[] = []
+
+  try {
+    // Dev / unbundled: import.meta.url points at this file.
+    const require = createRequire(import.meta.url)
+    candidates.push(require.resolve('@rivetkit/rivetkit-wasm/rivetkit_wasm_bg.wasm'))
+  } catch { }
+
+  try {
+    // Production bundle: import.meta.url is rewritten to file:///_entry.js,
+    // so use the Node entry script (e.g. .output/server/index.mjs) instead.
+    const entry = process.argv[1]
+    if (entry) {
+      const require = createRequire(pathToFileURL(resolvePath(entry)).href)
+      candidates.push(require.resolve('@rivetkit/rivetkit-wasm/rivetkit_wasm_bg.wasm'))
+    }
+  } catch { }
+
+  for (const wasmPath of candidates) {
+    try {
+      return readFileSync(wasmPath)
+    } catch (err) {
+      console.warn('[rivet-registry] Failed to read WASM from', wasmPath, (err as Error).message)
+    }
+  }
+
+  console.warn('[rivet-registry] Could not preload WASM runtime, will let RivetKit fetch it')
+  return undefined
+}
+
+// RivetKit's EnvoyConfigSchema default for `version` reads RIVET_ENVOY_VERSION.
+// If we leave it unset, the default falls back to 1. We intentionally do NOT
+// set it to "serverless" here because that string is not a valid number and
+// causes the schema/Rust deserialization to fail with NaN.
+// Serverless mode is selected by how we use registry.handler(), not by this env var.
 
 /**
  * Lindi's Store — Rivet Actor Registry
@@ -52,22 +83,29 @@ ensureRivetEnvoyVersion()
  * - analyticsActor   📊 Scheduled dashboard stats caching
  * - settingsActor    ⚙️ In-memory site configuration
  *
- * Runtime mode: RUNNER (envoy). The app holds actors resident in memory
- * and the Rivet Engine routes calls to it via a persistent WebSocket.
- * registry.startEnvoy() is called from server/plugins/rivet-runner.ts
- * at Nitro startup — NOT here, to keep setup() pure.
- *
- * Self-hosted Rivet Engine: https://komla:<token>@rivet.yebi.africa
+ * Runtime mode: SERVERLESS. The self-hosted engine's guard requires the
+ * x-rivet-token HTTP header for WebSocket auth, but the RivetKit SDK only
+ * sends auth via Sec-WebSocket-Protocol subprotocol (WebSocket API cannot
+ * send custom headers). We therefore use the serverless HTTP handler at
+ * /api/rivet/*, initialized in server/plugins/rivet-runner.ts.
  */
 export const registry = setup({
   // Explicitly pass endpoint — Nitro's bundler may not propagate process.env
   // for RivetKit's internal env var reads, causing it to default to localhost:6420.
   endpoint: process.env.RIVET_ENDPOINT,
-  // Versioning is required for production so Rivet can distinguish
-  // old deployments from new ones and drain stale runners safely.
-  // RIVET_RUNNER_VERSION is mapped to RIVET_ENVOY_VERSION above;
-  // the envoy config picks it up automatically.
-  version: process.env.RIVET_RUNNER_VERSION || '1',
+
+  // Envoy version — bump RIVET_RUNNER_VERSION on each deploy so the engine
+  // drains stale runners. Placed under `envoy` where RivetKit expects it.
+  envoy: {
+    version: Number(process.env.RIVET_RUNNER_VERSION) || 1,
+  },
+
+  // Preload WASM bytes so the runtime never relies on fetch(import.meta.url)
+  // for the .wasm file. Required for Bun dev and robust in production builds.
+  wasm: {
+    initInput: getWasmInitInput(),
+  },
+
   use: {
     catalogActor,
     inventoryActor,

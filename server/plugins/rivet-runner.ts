@@ -16,6 +16,7 @@
  */
 
 import { connectDB } from '~/server/db/mongodb'
+import { registry } from '~/server/rivet/registry'
 
 export default defineNitroPlugin(async () => {
   // Connect MongoDB (actors need DB access)
@@ -28,5 +29,4 @@ export default defineNitroPlugin(async () => {
   const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   console.log(`[rivet-serverless] Listening for engine requests at ${siteUrl}/api/rivet`)
   console.log('[rivet-serverless] Engine pool must be SERVERLESS kind with URL:', `${siteUrl}/api/rivet`)
-  console.log('[rivet-serverless] To verify: curl "https://rivet.yebi.africa/runners?namespace=komla" -H "Authorization: Bearer <TOKEN>" (should show NO runners)')
 })

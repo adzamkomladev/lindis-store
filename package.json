@@ -3,7 +3,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "rm -rf .nuxt .output ; nuxt build",
+    "build": "node -e \"require('fs').rmSync('.nuxt',{recursive:true,force:true}); require('fs').rmSync('.output',{recursive:true,force:true});\" && nuxt build",
     "dev": "nuxt dev",
     "start": "node .output/server/index.mjs",
     "start:host": "nuxt dev --host",

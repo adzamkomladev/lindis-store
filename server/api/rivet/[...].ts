@@ -17,5 +17,9 @@ import { registry } from '~/server/rivet/registry'
  */
 export default defineEventHandler(async (event) => {
   const webRequest = toWebRequest(event)
+  console.log('[rivet-route] method', webRequest.method, 'url', webRequest.url)
+  webRequest.headers.forEach((value, key) => {
+    console.log('[rivet-route] header', key, value)
+  })
   return registry.handler(webRequest)
 })

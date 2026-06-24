@@ -1,7 +1,15 @@
 import { MailerooClient, EmailAddress } from "maileroo-sdk";
 import { EmailTemplate } from "~~/types/email";
 
-const client = new MailerooClient(process.env.MAILEROO_API_KEY as string);
+function getMailerooClient(): MailerooClient | undefined {
+  const config = useRuntimeConfig()
+  const apiKey = config.mailerooApiKey || process.env.MAILEROO_API_KEY
+  if (!apiKey) {
+    console.warn('[email] MAILEROO_API_KEY not configured; emails will not be sent')
+    return undefined
+  }
+  return new MailerooClient(apiKey)
+}
 
 export const sendTemplatedEmail = async (
     recipient: { email: string; name?: string },
@@ -9,11 +17,15 @@ export const sendTemplatedEmail = async (
     templateId: EmailTemplate,
     data?: Record<string, any>,
 ) => {
+    const client = getMailerooClient()
+    if (!client) return
+
     try {
+        const config = useRuntimeConfig()
         const referenceId = await client.sendTemplatedEmail({
             from: new EmailAddress(
-                process.env.MAILEROO_FROM_EMAIL as string,
-                process.env.MAILEROO_FROM_NAME as string,
+                config.mailerooFromEmail || process.env.MAILEROO_FROM_EMAIL || 'store@lindis-store.com',
+                config.mailerooFromName || process.env.MAILEROO_FROM_NAME || "Lindi's Store",
             ),
             to: [new EmailAddress(recipient.email, recipient.name)],
             subject,
