@@ -61,7 +61,7 @@ export const reviewWorker = actor({
 
         // Enqueue invitation email
         const client = c.client<typeof import('../registry').registry>()
-        await client.emailWorker.getOrCreate(['main']).emails.push({
+        await client.emailWorker.getOrCreate(['main']).send('emails', {
           to: email,
           subject: `How was your Lindi's Store order?`,
           templateId: 'review_invitation',

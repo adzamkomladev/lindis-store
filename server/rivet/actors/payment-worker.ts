@@ -44,7 +44,7 @@ export const paymentWorker = actor({
           try {
             // Notify the order actor to continue its workflow
             const client = c.client<typeof import('../registry').registry>()
-            await client.orderActor.getOrCreate([orderNumber]).commands.push({
+            await client.orderActor.getOrCreate([orderNumber]).send('commands', {
               type: 'payment_confirmed',
               reference,
               amount: data.data.amount,
@@ -84,7 +84,7 @@ export const paymentWorker = actor({
 
         if (data.status && data.data?.status === 'success') {
           // Re-enqueue as confirmed payment
-          await c.queue.payments.push({
+          await c.queue.send('payments', {
             reference,
             orderNumber,
             amount: data.data.amount,

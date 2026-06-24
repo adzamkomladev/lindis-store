@@ -85,11 +85,17 @@ export const orderActor = actor({
         createdAt: new Date(),
       }
 
-      const result = await orders.insertOne(orderDoc as any)
+      await orders.updateOne(
+        { orderNumber: ctx.key[0] },
+        { $setOnInsert: orderDoc },
+        { upsert: true }
+      )
+
+      const created = await orders.findOne({ orderNumber: ctx.key[0] })
       ctx.state.order = {
-        ...orderDoc,
-        _id: result.insertedId.toString(),
-        items: orderDoc.items.map(i => ({ ...i, productId: i.productId.toString() })),
+        ...created!,
+        _id: created!._id.toString(),
+        items: created!.items.map(i => ({ ...i, productId: i.productId.toString() })),
       }
     })
 
