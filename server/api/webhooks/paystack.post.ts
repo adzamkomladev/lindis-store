@@ -1,6 +1,7 @@
 import { createHmacSha512 } from '../../utils/hmac'
 import type { PaystackWebhookPayload, PaystackChargeSuccessfulPayload } from '~~/types/paystack'
 import { enqueuePayment } from '~/server/utils/queues'
+import { useRivet } from '~/server/rivet/client'
 
 export default defineEventHandler(async (event) => {
   const body = await readRawBody(event, 'utf8')
@@ -38,6 +39,25 @@ export default defineEventHandler(async (event) => {
     })
 
     console.log(`[Paystack Webhook] Queued payment: ${chargeData.reference}`)
+  }
+
+  if (payload.event === 'charge.failed') {
+    const chargeData = payload.data as any
+    const orderNumber = chargeData.metadata?.orderNumber
+
+    if (orderNumber) {
+      try {
+        const rivet = useRivet()
+        await rivet.orderActor.getOrCreate([orderNumber]).send('commands', {
+          type: 'payment_failed',
+          reference: chargeData.reference,
+          reason: 'Paystack charge.failed webhook received',
+        })
+        console.log(`[Paystack Webhook] Notified order actor about failed payment: ${chargeData.reference}`)
+      } catch (err) {
+        console.error(`[Paystack Webhook] Failed to notify order actor:`, (err as Error).message)
+      }
+    }
   }
 
   return 'OK'

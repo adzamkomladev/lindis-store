@@ -30,7 +30,13 @@ export interface PaymentConfirmedCommand {
   metadata?: Record<string, unknown>
 }
 
-export type OrderCommand = InitiateOrderCommand | PaymentConfirmedCommand
+export interface PaymentFailedCommand {
+  type: 'payment_failed'
+  reference: string
+  reason?: string
+}
+
+export type OrderCommand = InitiateOrderCommand | PaymentConfirmedCommand | PaymentFailedCommand
 
 export const orderActor = actor({
   options: { name: 'Order Workflow', icon: '🔄' },
@@ -47,55 +53,16 @@ export const orderActor = actor({
 
     await ctx.step('create-order', async () => {
       const { collections } = await import('~/server/db/collections')
-      const { ObjectId } = await import('mongodb')
       const { orders } = collections()
 
-      const subtotal = data.items.reduce((sum, i) => sum + i.price * i.quantity, 0)
-      const discountAmount = data.discount?.discountAmount ?? 0
-      const total = Math.max(0, subtotal - discountAmount)
-
-      const orderDoc: OrderDoc = {
-        orderNumber: ctx.key[0],
-        userId: data.userId ? new ObjectId(data.userId) : undefined,
-        guestEmail: data.guestEmail,
-        status: 'pending',
-        paymentStatus: 'unpaid',
-        subtotal,
-        discountAmount,
-        total,
-        discount: data.discount
-          ? { code: data.discount.code, type: data.discount.type, value: data.discount.value }
-          : null,
-        items: data.items.map((item): OrderItemDoc => ({
-          productId: new ObjectId(item.productId),
-          productName: item.productName,
-          productSlug: item.productSlug,
-          productImages: item.productImages,
-          quantity: item.quantity,
-          priceAtPurchase: item.price,
-          customText: item.customText,
-        })),
-        payment: {
-          reference: data.paystackReference,
-          provider: 'paystack',
-          amount: total,
-          status: 'pending',
-        },
-        shippingDetails: data.shippingDetails,
-        createdAt: new Date(),
-      }
-
-      await orders.updateOne(
-        { orderNumber: ctx.key[0] },
-        { $setOnInsert: orderDoc },
-        { upsert: true }
-      )
-
       const created = await orders.findOne({ orderNumber: ctx.key[0] })
+      if (!created) {
+        throw new Error(`Order ${ctx.key[0]} not found in MongoDB — should have been created by initiate endpoint`)
+      }
       ctx.state.order = {
-        ...created!,
-        _id: created!._id.toString(),
-        items: created!.items.map(i => ({ ...i, productId: i.productId.toString() })),
+        ...created,
+        _id: created._id.toString(),
+        items: created.items.map(i => ({ ...i, productId: i.productId.toString() })),
       }
     })
 
@@ -111,14 +78,45 @@ export const orderActor = actor({
 
     ctx.state.phase = 'awaiting_payment'
 
-    const paymentCmd = await ctx.queue.next('wait-payment') as { body: PaymentConfirmedCommand }
+    const paymentMsg = await ctx.queue.next('wait-payment')
+
+    if (paymentMsg.body.type === 'payment_failed') {
+      await ctx.step('handle-payment-failed', async () => {
+        const { collections } = await import('~/server/db/collections')
+        const { ObjectId } = await import('mongodb')
+        const { orders } = collections()
+
+        if (ctx.state.order?._id) {
+          await orders.updateOne(
+            { _id: new ObjectId(ctx.state.order._id) },
+            {
+              $set: {
+                status: 'cancelled',
+                paymentStatus: 'failed',
+                'payment.status': 'failed',
+              },
+            }
+          )
+
+          // Release reserved inventory
+          const client = ctx.client<typeof import('../registry').registry>()
+          for (const item of ctx.state.order.items) {
+            await client.inventoryActor
+              .getOrCreate(['main'])
+              .release(item.productId, item.quantity)
+          }
+        }
+        ctx.state.phase = 'cancelled'
+      })
+      return
+    }
 
     await ctx.step('confirm-payment', async () => {
       const { collections } = await import('~/server/db/collections')
       const { ObjectId } = await import('mongodb')
       const { orders } = collections()
 
-      const payData = paymentCmd.body
+      const payData = paymentMsg.body as PaymentConfirmedCommand
       await orders.updateOne(
         { _id: new ObjectId(ctx.state.order!._id) },
         {

@@ -2,6 +2,8 @@ import { initiateOrderSchema } from '~~/schemas/order.schema'
 import { nanoid } from 'nanoid'
 import { useRivet } from '~/server/rivet/client'
 import { ObjectId } from 'mongodb'
+import { collections } from '~/server/utils/db'
+import type { OrderDoc, OrderItemDoc } from '~/server/db/types'
 
 export default defineEventHandler(async (event) => {
   const body = await readValidatedBody(event, initiateOrderSchema.parse)
@@ -25,7 +27,6 @@ export default defineEventHandler(async (event) => {
   let discountAmount = 0
 
   if (body.discountCode) {
-    const { collections } = await import('~/server/db/collections')
     const { discountCodes } = collections()
     const now = new Date()
 
@@ -53,7 +54,46 @@ export default defineEventHandler(async (event) => {
 
   const total = Math.max(0, subtotal - discountAmount)
 
-  // 4. Initialize Paystack transaction
+  // 4. Create the MongoDB order document first so it exists regardless of actor state
+  const { orders } = collections()
+  const orderDoc: OrderDoc = {
+    orderNumber,
+    userId: userId ?? undefined,
+    guestEmail: body.email,
+    status: 'pending',
+    paymentStatus: 'unpaid',
+    subtotal,
+    discountAmount,
+    total,
+    discount: discount
+      ? { code: discount.code, type: discount.type, value: discount.value }
+      : null,
+    items: body.items.map((item: any): OrderItemDoc => ({
+      productId: new ObjectId(item.id),
+      productName: item.name,
+      productSlug: item.slug,
+      productImages: item.images ?? [],
+      quantity: item.quantity,
+      priceAtPurchase: item.price,
+      customText: item.customText,
+    })),
+    payment: {
+      reference,
+      provider: 'paystack',
+      amount: total,
+      status: 'pending',
+    },
+    shippingDetails: {
+      name: body.name,
+      phone: body.phone,
+      address: body.address,
+      city: body.city,
+    },
+    createdAt: new Date(),
+  }
+  await orders.insertOne(orderDoc)
+
+  // 5. Initialize Paystack transaction
   const callback_url = `${config.public.baseUrl}/api/orders/verify`
   const paystackData = await initializeTransaction({
     email: body.email,
@@ -63,7 +103,7 @@ export default defineEventHandler(async (event) => {
     metadata: { orderNumber },
   })
 
-  // 5. Kick off the order workflow actor (creates order, reserves inventory)
+  // 6. Kick off the order workflow actor (reserves inventory, waits for payment)
   const rivet = useRivet()
   const orderActor = rivet.orderActor.getOrCreate([orderNumber])
   await orderActor.send('commands', {

@@ -58,6 +58,7 @@ const statusConfig: Record<string, { icon: any, chipClass: string, label: string
 const paymentStatusConfig: Record<string, { chipClass: string, label: string }> = {
   unpaid:   { chipClass: 'bg-amber-500/10 text-amber-700',     label: 'Unpaid' },
   paid:     { chipClass: 'bg-primary/10 text-primary', label: 'Paid' },
+  failed:   { chipClass: 'bg-red-500/10 text-red-600',         label: 'Failed' },
   refunded: { chipClass: 'bg-surface-container-low text-on-surface-variant',        label: 'Refunded' }
 }
 

@@ -23,6 +23,15 @@ export async function enqueueVerifyPayment(payload: VerifyPaymentPayload): Promi
   await rivet.paymentWorker.getOrCreate(['main']).send('verifyPayments', payload)
 }
 
+export async function enqueuePaymentFailed(payload: { reference: string; orderNumber: string; reason?: string }): Promise<void> {
+  const rivet = useRivet()
+  await rivet.orderActor.getOrCreate([payload.orderNumber]).send('commands', {
+    type: 'payment_failed',
+    reference: payload.reference,
+    reason: payload.reason,
+  })
+}
+
 export async function enqueueReviewRequest(payload: ReviewRequestPayload): Promise<void> {
   const rivet = useRivet()
   await rivet.reviewWorker.getOrCreate(['main']).send('reviewRequests', payload)

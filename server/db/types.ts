@@ -97,7 +97,7 @@ export interface OrderDoc {
   userId?: ObjectId                                  // linked customer account (optional for guest checkout)
   guestEmail: string
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
-  paymentStatus: 'unpaid' | 'paid' | 'refunded'
+  paymentStatus: 'unpaid' | 'paid' | 'failed' | 'refunded'
   subtotal: number                                   // pesewas
   discountAmount: number                             // pesewas
   total: number                                      // pesewas

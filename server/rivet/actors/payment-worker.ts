@@ -57,6 +57,18 @@ export const paymentWorker = actor({
             c.state.failed += 1
           }
         } else {
+          // Notify the order actor about payment failure
+          try {
+            const client = c.client<typeof import('../registry').registry>()
+            await client.orderActor.getOrCreate([orderNumber]).send('commands', {
+              type: 'payment_failed',
+              reference,
+              reason: 'Paystack verification returned non-success status',
+            })
+          } catch (err) {
+            console.error(`[PaymentWorker] Failed to notify order actor ${orderNumber}:`, (err as Error).message)
+          }
+
           // Update order payment status to failed in MongoDB
           try {
             const { collections } = await import('~/server/db/collections')
@@ -90,6 +102,18 @@ export const paymentWorker = actor({
             amount: data.data.amount,
             metadata: data.data,
           })
+        } else {
+          // Payment still not successful — notify order actor
+          try {
+            const client = c.client<typeof import('../registry').registry>()
+            await client.orderActor.getOrCreate([orderNumber]).send('commands', {
+              type: 'payment_failed',
+              reference,
+              reason: 'Re-verification returned non-success status',
+            })
+          } catch (err) {
+            console.error(`[PaymentWorker] Failed to notify order actor ${orderNumber}:`, (err as Error).message)
+          }
         }
       }
     }
