@@ -3,7 +3,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "node -e \"require('fs').rmSync('.nuxt',{recursive:true,force:true}); require('fs').rmSync('.output',{recursive:true,force:true});\" && nuxt build",
+    "build": "node -e \"require('fs').rmSync('.nuxt',{recursive:true,force:true}); require('fs').rmSync('.output',{recursive:true,force:true});\" && NODE_OPTIONS=--max-old-space-size=4096 nuxt build",
     "dev": "nuxt dev",
     "start": "node .output/server/index.mjs",
     "start:host": "nuxt dev --host",
@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.782.0",
-    "@nuxt/hints": "^1.0.0-alpha.5",
     "@nuxt/image": "^1.9.0",
     "@tabler/icons-vue": "^3.36.1",
     "@tanstack/vue-table": "^8.21.3",

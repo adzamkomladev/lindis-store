@@ -6,7 +6,6 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   modules: [
     '@nuxt/image',
-    '@nuxt/hints',
     'nuxt-auth-utils',
     'shadcn-nuxt'
   ],
