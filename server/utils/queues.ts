@@ -10,25 +10,25 @@ import type { ReviewRequestPayload, ReviewSubmissionPayload } from '~/server/riv
 
 export async function enqueueEmail(payload: EmailPayload): Promise<void> {
   const rivet = useRivet()
-  await rivet.emailWorker.getOrCreate(['main']).emails.push(payload)
+  await rivet.emailWorker.getOrCreate(['main']).send('emails', payload)
 }
 
 export async function enqueuePayment(payload: PaymentPayload): Promise<void> {
   const rivet = useRivet()
-  await rivet.paymentWorker.getOrCreate(['main']).payments.push(payload)
+  await rivet.paymentWorker.getOrCreate(['main']).send('payments', payload)
 }
 
 export async function enqueueVerifyPayment(payload: VerifyPaymentPayload): Promise<void> {
   const rivet = useRivet()
-  await rivet.paymentWorker.getOrCreate(['main']).verifyPayments.push(payload)
+  await rivet.paymentWorker.getOrCreate(['main']).send('verifyPayments', payload)
 }
 
 export async function enqueueReviewRequest(payload: ReviewRequestPayload): Promise<void> {
   const rivet = useRivet()
-  await rivet.reviewWorker.getOrCreate(['main']).reviewRequests.push(payload)
+  await rivet.reviewWorker.getOrCreate(['main']).send('reviewRequests', payload)
 }
 
 export async function enqueueReviewSubmission(payload: ReviewSubmissionPayload): Promise<void> {
   const rivet = useRivet()
-  await rivet.reviewWorker.getOrCreate(['main']).reviewSubmissions.push(payload)
+  await rivet.reviewWorker.getOrCreate(['main']).send('reviewSubmissions', payload)
 }

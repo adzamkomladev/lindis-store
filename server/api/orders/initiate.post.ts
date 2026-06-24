@@ -66,7 +66,7 @@ export default defineEventHandler(async (event) => {
   // 5. Kick off the order workflow actor (creates order, reserves inventory)
   const rivet = useRivet()
   const orderActor = rivet.orderActor.getOrCreate([orderNumber])
-  await orderActor.commands.push({
+  await orderActor.send('commands', {
     type: 'initiate',
     userId: userId?.toString(),
     guestEmail: body.email,
