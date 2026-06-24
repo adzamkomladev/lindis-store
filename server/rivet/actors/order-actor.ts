@@ -138,7 +138,7 @@ export const orderActor = actor({
     await ctx.step('send-order-confirmation', async () => {
       const client = ctx.client<typeof import('../registry').registry>()
       const order = ctx.state.order!
-      await client.emailWorker.getOrCreate(['main']).emails.push({
+      await client.emailWorker.getOrCreate(['main']).send('emails', {
         to: order.guestEmail,
         subject: `Order Confirmed - ${order.orderNumber}`,
         templateId: 'order_confirmation',
@@ -190,7 +190,7 @@ export const orderActor = actor({
       if (!order || order.paymentStatus !== 'paid') return
 
       const client = c.client<typeof import('../registry').registry>()
-      await client.reviewWorker.getOrCreate(['main']).reviewRequests.push({
+      await client.reviewWorker.getOrCreate(['main']).send('reviewRequests', {
         orderId: order._id,
         orderNumber: order.orderNumber,
         email: order.guestEmail,
