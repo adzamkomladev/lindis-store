@@ -274,8 +274,8 @@ const getStatusConfig = (status: string) => {
         <div v-else-if="recentOrders?.length">
           <NuxtLink
             v-for="order in recentOrders"
-            :key="order.id"
-            :to="`/admin/orders/${order.id}`"
+            :key="order._id"
+            :to="`/admin/orders/${order._id}`"
             class="grid grid-cols-12 gap-4 items-center px-6 py-4 hover:bg-surface-container-low transition-colors"
           >
              <div class="col-span-3 font-body text-sm font-bold text-on-surface">#ORD-{{ order.orderNumber.substring(0, 4) }}</div>

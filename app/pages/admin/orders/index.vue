@@ -178,8 +178,8 @@ const visiblePages = computed(() => {
       <div class="md:hidden divide-y divide-[#c5c6d1]/10">
         <NuxtLink
           v-for="order in paginatedOrders"
-          :key="order.id"
-          :to="`/admin/orders/${order.id}`"
+          :key="order._id"
+          :to="`/admin/orders/${order._id}`"
           class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors"
         >
           <div class="min-w-0 flex-1">
@@ -211,7 +211,7 @@ const visiblePages = computed(() => {
         <tbody class="divide-y divide-[#c5c6d1]/10">
           <tr
             v-for="order in paginatedOrders"
-            :key="order.id"
+            :key="order._id"
             class="hover:bg-surface-container-low transition-colors"
           >
             <td class="px-6 py-4 font-label font-bold text-xs uppercase tracking-wide text-on-surface">{{ order.orderNumber }}</td>
@@ -225,7 +225,7 @@ const visiblePages = computed(() => {
             </td>
             <td class="px-6 py-4 text-right font-label font-bold text-sm text-on-surface">{{ formatPrice(order.total) }}</td>
             <td class="px-6 py-4 text-right">
-              <NuxtLink :to="`/admin/orders/${order.id}`"
+              <NuxtLink :to="`/admin/orders/${order._id}`"
                 class="inline-flex items-center justify-center w-8 h-8 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors">
                 <Eye class="w-4 h-4" />
               </NuxtLink>
