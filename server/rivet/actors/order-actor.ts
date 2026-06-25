@@ -55,14 +55,17 @@ export const orderActor = actor({
       const { collections } = await import('~/server/db/collections')
       const { orders } = collections()
 
-      const created = await orders.findOne({ orderNumber: step.key[0] })
+      const created = await orders.findOne({ orderNumber: ctx.key[0] })
       if (!created) {
-        throw new Error(`Order ${step.key[0]} not found in MongoDB — should have been created by initiate endpoint`)
+        throw new Error(`Order ${ctx.key[0]} not found in MongoDB — should have been created by initiate endpoint`)
       }
-      step.state.order = {
+      const serialized: SerializedOrder = {
         ...created,
         _id: created._id.toString(),
         items: created.items.map(i => ({ ...i, productId: i.productId.toString() })),
+      }
+      if (step.state !== undefined) {
+        step.state.order = serialized
       }
     })
 
@@ -73,11 +76,11 @@ export const orderActor = actor({
           .getOrCreate(['main'])
           .reserve(item.productId, item.quantity)
       }
-      step.state.phase = 'inventory_reserved'
+      if (step.state !== undefined) step.state.phase = 'inventory_reserved'
     })
 
     await ctx.step('mark-awaiting-payment', async (step) => {
-      step.state.phase = 'awaiting_payment'
+      if (step.state !== undefined) step.state.phase = 'awaiting_payment'
     })
 
     const paymentMsg = await ctx.queue.next('wait-payment')
@@ -88,9 +91,10 @@ export const orderActor = actor({
         const { ObjectId } = await import('mongodb')
         const { orders } = collections()
 
-        if (step.state.order?._id) {
+        const orderDoc = await orders.findOne({ orderNumber: ctx.key[0] })
+        if (orderDoc?._id) {
           await orders.updateOne(
-            { _id: new ObjectId(step.state.order._id) },
+            { _id: orderDoc._id },
             {
               $set: {
                 status: 'cancelled',
@@ -101,25 +105,24 @@ export const orderActor = actor({
           )
 
           const client = step.client<typeof import('../registry').registry>()
-          for (const item of step.state.order.items) {
+          for (const item of orderDoc.items) {
             await client.inventoryActor
               .getOrCreate(['main'])
-              .release(item.productId, item.quantity)
+              .release(item.productId.toString(), item.quantity)
           }
         }
-        step.state.phase = 'cancelled'
+        if (step.state !== undefined) step.state.phase = 'cancelled'
       })
       return
     }
 
     await ctx.step('confirm-payment', async (step) => {
       const { collections } = await import('~/server/db/collections')
-      const { ObjectId } = await import('mongodb')
       const { orders } = collections()
 
       const payData = paymentMsg.body as PaymentConfirmedCommand
       await orders.updateOne(
-        { _id: new ObjectId(step.state.order!._id) },
+        { orderNumber: ctx.key[0] },
         {
           $set: {
             paymentStatus: 'paid',
@@ -132,37 +135,49 @@ export const orderActor = actor({
         }
       )
 
-      if (step.state.order) {
-        step.state.order.paymentStatus = 'paid'
-        step.state.order.status = 'processing'
-        step.state.order.payment.status = 'success'
+      if (step.state !== undefined) {
+        const updatedDoc = await orders.findOne({ orderNumber: ctx.key[0] })
+        if (updatedDoc) {
+          step.state.order = {
+            ...updatedDoc,
+            _id: updatedDoc._id.toString(),
+            items: updatedDoc.items.map(i => ({ ...i, productId: i.productId.toString() })),
+          }
+        }
+        step.state.phase = 'paid'
       }
-      step.state.phase = 'paid'
     })
 
     await ctx.step('send-order-confirmation', async (step) => {
+      const orderDoc = await (async () => {
+        const { collections } = await import('~/server/db/collections')
+        const { orders } = collections()
+        return orders.findOne({ orderNumber: ctx.key[0] })
+      })()
+      if (!orderDoc) return
+
       const client = step.client<typeof import('../registry').registry>()
-      const order = step.state.order!
       await client.emailWorker.getOrCreate(['main']).send('emails', {
-        to: order.guestEmail,
-        subject: `Order Confirmed - ${order.orderNumber}`,
+        to: orderDoc.guestEmail,
+        subject: `Order Confirmed - ${orderDoc.orderNumber}`,
         templateId: 'order_confirmation',
         data: {
-          orderNumber: order.orderNumber,
-          items: order.items,
-          total: order.total,
-          shippingDetails: order.shippingDetails,
+          orderNumber: orderDoc.orderNumber,
+          items: orderDoc.items,
+          total: orderDoc.total,
+          shippingDetails: orderDoc.shippingDetails,
         },
       })
-      step.state.phase = 'confirmed'
+      if (step.state !== undefined) step.state.phase = 'confirmed'
     })
 
     await ctx.step('increment-discount-usage', async (step) => {
-      if (!step.state.order?.discount?.code) return
       const { collections } = await import('~/server/db/collections')
-      const { discountCodes } = collections()
+      const { orders, discountCodes } = collections()
+      const orderDoc = await orders.findOne({ orderNumber: ctx.key[0] })
+      if (!orderDoc?.discount?.code) return
       await discountCodes.updateOne(
-        { code: step.state.order.discount.code },
+        { code: orderDoc.discount.code },
         { $inc: { usedCount: 1 } }
       )
     })
@@ -171,17 +186,19 @@ export const orderActor = actor({
     await ctx.sleep('review-wait', SEVEN_DAYS_MS)
 
     await ctx.step('send-review-request', async (step) => {
-      const order = step.state.order
-      if (!order || order.paymentStatus !== 'paid') return
+      const { collections } = await import('~/server/db/collections')
+      const { orders } = collections()
+      const orderDoc = await orders.findOne({ orderNumber: ctx.key[0] })
+      if (!orderDoc || orderDoc.paymentStatus !== 'paid') return
 
       const client = step.client<typeof import('../registry').registry>()
       await client.reviewWorker.getOrCreate(['main']).send('reviewRequests', {
-        orderId: order._id,
-        orderNumber: order.orderNumber,
-        email: order.guestEmail,
-        customerName: order.shippingDetails.name,
-        items: order.items.map(i => ({
-          productId: i.productId,
+        orderId: orderDoc._id.toString(),
+        orderNumber: orderDoc.orderNumber,
+        email: orderDoc.guestEmail,
+        customerName: orderDoc.shippingDetails.name,
+        items: orderDoc.items.map(i => ({
+          productId: i.productId.toString(),
           productName: i.productName,
           productImages: i.productImages,
         })),
