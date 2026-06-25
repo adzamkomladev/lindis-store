@@ -116,7 +116,7 @@ const verifyPayment = async () => {
     const result = await $fetch('/api/orders/verify-payment', {
       method: 'POST',
       body: {
-        orderId: order.value.id,
+        orderNumber: order.value.orderNumber,
         paymentReference: order.value.payment.reference
       }
     })
